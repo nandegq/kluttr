@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import dj_database_url
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv('OPEN_API_KEY')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,11 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k)!*5kbwat3s1%nyc!sns&arpxoa7yikyowa-chvvc+zq-zkt%"
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-for-local")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = ['kluttr.onrender.com',
                  '127.0.0.1', 'www.kluttr.co.za', 'kluttr.co.za']
 
@@ -90,8 +89,7 @@ WSGI_APPLICATION = "kluttr.wsgi.application"
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Fallback for local use
-        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600
     )
 }
@@ -132,7 +130,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -156,5 +153,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kluttrx@gmail.com'
-EMAIL_HOST_PASSWORD = '@X23cpobkoobby69'
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+OPENAI_API_KEY = os.getenv('OPEN_API_KEY')
