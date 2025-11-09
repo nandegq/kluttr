@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Your Pickup Plan{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold text-center mb-8 text-gray-900">Choose Your Monthly Pickup Plan</h1>
+
+    <div class="grid md:grid-cols-3 gap-6">
+        {% for plan in plans %}
+        <div
+            class="glass p-6 text-center hover:shadow-xl transition duration-300 {% if plan.is_popular %}border-2 border-blue-500{% endif %}">
+            <h2 class="text-2xl font-semibold mb-3">{{ plan.name }}</h2>
+            <p class="text-gray-600 mb-4">{{ plan.pickups_per_month }} pickup{% if plan.pickups_per_month > 1 %}s
+                {%endif %} per month,{{ plan.locations }} location{% if plan.locations > 1 %}s{% endif %}</p>
+            <p class="text-3xl font-bold mb-4 text-blue-500">R{{ plan.price }}</p>
+            <a href="{% url 'clients:payment_info' %}?plan={{ plan.id }}"
+                class="inline-block bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600 transition">
+                Select Plan
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

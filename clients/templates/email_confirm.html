@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Subscription Confirmed</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    .header h1 {
+      color: #00a86b;
+    }
+
+    .content {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .cta {
+      display: block;
+      width: fit-content;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #00a86b;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Kluttr</h1>
+      <p>Subscription Confirmed ✅</p>
+    </div>
+    <div class="content">
+      <p>Hi there,</p>
+      <p>Thank you for subscribing to the <strong>{{ plan_name }}</strong> plan! Your first pickup is scheduled soon.
+      </p>
+      <p>We’ll make sure your reusable waste is collected reliably and efficiently.</p>
+    </div>
+    <a href="/" class="cta">Go to Dashboard</a>
+    <p style="font-size: 12px; color: #888;">If you have any questions, reply to this email.</p>
+  </div>
+</body>
+
+</html>

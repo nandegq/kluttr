@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3 text-center">Available Pickup Jobs</h2>
+
+  {% if jobs %}
+  <div class="row">
+    {% for job in jobs %}
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Pickup Request #{{ job.id }}</h5>
+          <p class="card-text">
+            <strong>Customer:</strong> {{ job.customer.user.username }}<br>
+            <strong>Address:</strong> {{ job.address }}<br>
+            <strong>Waste Type:</strong> {{ job.waste_type }}<br>
+            <strong>Scheduled Date:</strong> {{ job.scheduled_date|date:"M d, Y" }}
+          </p>
+
+          <form method="post" action="{% url 'accept_job' job.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">
+              Accept Job
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center">
+    No pending jobs available right now. Check again later!
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

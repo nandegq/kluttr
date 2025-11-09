@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Upcycler Dashboard | kluttr{% endblock %}
+
+{% block content %}
+<h2 class="mb-8 text-3xl font-semibold text-center text-gray-800">Welcome to Your Dashboard</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Profile Card -->
+    <div class="glass p-6 rounded-2xl shadow-lg">
+        <h5 class="text-xl font-semibold mb-2">👤 Profile</h5>
+        <p class="text-gray-700 mb-4">View your details.</p>
+        <a href="{% url 'recycler:upcycler_info' %}"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">View Profile</a>
+
+    </div>
+
+    <!-- Schedule Receival Card -->
+    <div class="glass p-6 rounded-2xl shadow-lg">
+        <h5 class="text-xl font-semibold mb-2">🚛 View and track your pickups</h5>
+        <p class="text-gray-700 mb-4">View jobs.</p>
+        <a href="{% url 'recycler:available_jobs' %}"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Schedule
+            Now</a>
+    </div>
+
+    <!-- Reports Card -->
+    <div class="glass p-6 rounded-2xl shadow-lg">
+        <h5 class="text-xl font-semibold mb-2">📈 Reports</h5>
+        <p class="text-gray-700 mb-4">View your waste received history and impact reports.</p>
+        <a href="{% url 'analytics:upcycler_analytics' %}"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">View
+            Reports</a>
+    </div>
+
+    <!-- Billing Card -->
+    <div class="glass p-6 rounded-2xl shadow-lg">
+        <h5 class="text-xl font-semibold mb-2">💳 Earnings</h5>
+        <p class="text-gray-700 mb-4">View and track your earnings.</p>
+        <a href="{% url 'recycler:upcycler_earnings' %}"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Manage
+            Billing</a>
+    </div>
+
+</div>
+{% endblock %}

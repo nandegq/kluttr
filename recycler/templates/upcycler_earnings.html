@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">My Earnings</h2>
+
+  <div class="card shadow-sm text-center mb-4">
+    <div class="card-body">
+      <h5>Total Earnings</h5>
+      <h3 class="text-success fw-bold">R{{ request.user.collector.earnings }}</h3>
+      <p class="text-muted">You earn 20% per completed pickup</p>
+    </div>
+  </div>
+
+  <h4 class="mb-3">Completed Pickups</h4>
+  {% if completed_pickups %}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Waste Type</th>
+          <th>Price</th>
+          <th>Your Cut (20%)</th>
+          <th>Completed On</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pickup in completed_pickups %}
+        <tr>
+          <td>{{ pickup.id }}</td>
+          <td>{{ pickup.customer.user.username }}</td>
+          <td>{{ pickup.waste_type }}</td>
+          <td>R{{ pickup.price }}</td>
+          <td>R{{ pickup.price|floatformat:2|add:""|floatformat:2|floatformat:"2"|divisibleby:5 }}</td>
+          <td>{{ pickup.completed_at|date:"M d, Y" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted">You haven’t completed any pickups yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

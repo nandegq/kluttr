@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Upcycler Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+
+    <h1 class="text-3xl font-bold mb-6">Sustainability Dashboard</h1>
+
+    <!-- Total Waste and CO2 -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-green-100 p-4 rounded-lg">
+            <h2 class="text-xl font-semibold">Total Waste Diverted</h2>
+            <p class="text-2xl">{{ total_waste }} kg</p>
+        </div>
+        <div class="bg-blue-100 p-4 rounded-lg">
+            <h2 class="text-xl font-semibold">CO₂ Emissions Saved</h2>
+            <p class="text-2xl">{{ co2_saved }} kg</p>
+        </div>
+    </div>
+
+    <!-- Waste Type Breakdown -->
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-2">Waste Type Breakdown</h2>
+        {% if waste_breakdown %}
+        <table class="w-full border rounded-lg">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-2 text-left">Waste Type</th>
+                    <th class="p-2 text-left">Total Weight (kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type, weight in waste_breakdown.items %}
+                <tr class="border-t">
+                    <td class="p-2">{{ type }}</td>
+                    <td class="p-2">{{ weight }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No waste recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Monthly Totals -->
+    <div>
+        <h2 class="text-xl font-semibold mb-2">Monthly Totals</h2>
+        {% if monthly_totals %}
+        <table class="w-full border rounded-lg">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-2 text-left">Month</th>
+                    <th class="p-2 text-left">Total Waste (kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for month, weight in monthly_totals.items %}
+                <tr class="border-t">
+                    <td class="p-2">{{ month }}</td>
+                    <td class="p-2">{{ weight }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No pickups recorded yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

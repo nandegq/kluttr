@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Schedule Pickup | kluttr.{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl font-semibold text-center mb-4 mt-4">Schedule Your Pickup</h2>
+
+{% if selected_plan %}
+<p class="text-center mb-6 text-gray-700">
+    You selected the <strong>{{ selected_plan.name }}</strong> plan:
+    {{ selected_plan.pickups_per_month }} pickup{% if selected_plan.pickups_per_month > 1 %}s{% endif %} per month,
+    {{ selected_plan.locations }} location{% if selected_plan.locations > 1 %}s{% endif %}.
+</p>
+{% endif %}
+
+<form method="post" class="max-w-lg mx-auto space-y-5">
+    {% csrf_token %}
+
+    <div>
+        <label class="block font-medium text-gray-700">Pickup Date</label>
+        {{ form.scheduled_date }}
+    </div>
+
+    <div>
+        <label class="block font-medium text-gray-700">Pickup Time</label>
+        {{ form.pickup_time }}
+    </div>
+    <div>
+        <label class="block font-medium text-gray-700">Waste type</label>
+        {{ form.waste_type }}
+    </div>
+
+    <div>
+        <label class="block font-medium text-gray-700">Notes (optional)</label>
+        {{ form.notes }}
+    </div>
+
+    <div>
+        <label class='block font-medium text-gray-700'>Weight (kg)</label>
+        {{ form.weight }}
+    </div>
+
+    <div>
+        <label class='block font-medium text-gray-700'>Upload Images (optional)</label>
+        {{ form.images }}
+    </div>
+
+    <button type="submit"
+        class="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition-colors mt-4">
+        Confirm Pickup
+    </button>
+    <a href="{% url 'clients:success' %}" class="text-blue-500 hover:text-blue-600 font-medium"></a>
+</form>
+
+<p class="text-center mt-6 text-gray-600">
+    <a href="{% url 'landing' %}" class="text-blue-500 hover:text-blue-600 font-medium">Back to
+        Home</a>
+</p>
+{% endblock %}
