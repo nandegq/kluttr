@@ -32,6 +32,9 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = ['kluttr.onrender.com',
                  '127.0.0.1', 'www.kluttr.co.za', 'kluttr.co.za']
 
+CSRF_TRUSTED_ORIGINS = ['https://kluttr.onrender.com',
+                        'https://www.kluttr.co.za', 'https://kluttr.co.za',]
+
 
 # Application definition
 
@@ -88,10 +91,7 @@ WSGI_APPLICATION = "kluttr.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
-    )
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 
