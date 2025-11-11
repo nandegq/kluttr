@@ -25,23 +25,32 @@ def register(request):
             user_type = form.cleaned_data.get('user_type')
 
             # Create related profile automatically
-            if user_type == 'business':
-                Client.objects.create(user=user)
-            elif user_type == 'household':
-                Customer.objects.create(user=user)
-            elif user_type == 'collector':
-                Collector.objects.create(user=user)
-            print('User created', user.username, user_type)
+            try:
+
+                if user_type == 'business':
+                    Client.objects.create(user=user)
+                elif user_type == 'household':
+                    Customer.objects.create(user=user)
+                elif user_type == 'collector':
+                    Collector.objects.create(user=user)
+                print('User created', user.username, user_type)
+
+            except Exception as e:
+                print(f'Failed to create profile for {user.username}: {e}')
+                user.delete()
+                print('Registration incomplete: please contact support')
 
             messages.success(
                 request, 'Registration successful! You can now log in.')
             return redirect('login')
         else:
             print('Registration errors', form.errors)
+            messages.error(request, 'Invalid data submitted.')
+
     else:
         form = RegistrationForm()
 
-    return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', {'form': form})
 
 
 def login_view(request):
