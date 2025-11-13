@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Profile
 from recycler.models import Collector
-
+from django.db import transaction
 # Create your views here.
 # main page of app = index
 # using model API to get objects from database
@@ -21,36 +21,44 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-
             user_type = form.cleaned_data.get('user_type')
 
-            # Create related profile automatically
             try:
+                with transaction.atomic():
+                    print(
+                        f"🟢 Creating user: {user.username}, type: {user_type}")
 
-                if user_type == 'business':
-                    Client.objects.create(user=user)
-                elif user_type == 'household':
-                    Customer.objects.create(user=user)
-                elif user_type == 'collector':
-                    Collector.objects.create(user=user)
-                print('User created', user.username, user_type)
+                    if user_type == 'business':
+                        Client.objects.create(user=user)
+                        print("✅ Created Client profile")
+                    elif user_type == 'household':
+                        Customer.objects.create(user=user)
+                        print("✅ Created Customer profile")
+                    elif user_type == 'collector':
+                        Collector.objects.create(user=user)
+                        print("✅ Created Collector profile")
+                    else:
+                        print(
+                            f"⚠️ No profile created — user_type = {user_type}")
 
             except Exception as e:
-                print(f'Failed to create profile for {user.username}: {e}')
+                print(f"❌ Failed to create profile for {user.username}: {e}")
+                import traceback
+                traceback.print_exc()  # show full traceback
                 user.delete()
-                print('Registration incomplete: please contact support')
+                print("🛑 Registration rolled back")
 
             messages.success(
-                request, 'Registration successful! You can now log in.')
-            return redirect('login')
-        else:
-            print('Registration errors', form.errors)
-            messages.error(request, 'Invalid data submitted.')
+                request, "Registration successful! You can now log in.")
+            return redirect("login")
 
+        else:
+            print("❌ Registration form errors:", form.errors)
+            messages.error(request, "Invalid data submitted.")
     else:
         form = RegistrationForm()
 
-        return render(request, 'users/register.html', {'form': form})
+    return render(request, "users/register.html", {"form": form})
 
 
 def login_view(request):
