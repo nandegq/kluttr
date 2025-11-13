@@ -82,7 +82,7 @@ def household_payment_info(request):
                     'merchant_key': settings.PAYFAST_MERCHANT_KEY,
                     'amount': str(plan.plan_price),  # The one-time payment
                     'item_name': plan.plan_name,
-                    'return_url': request.build_absolute_uri('/household/household_schedule/'),
+                    'return_url': request.build_absolute_uri('/household_schedule/'),
                     'cancel_url': request.build_absolute_uri('/household/household_plan/'),
                     'notify_url': request.build_absolute_uri('/household/payfast-ipn/'),
                     'custom_str1': request.user.email,
@@ -97,7 +97,7 @@ def household_payment_info(request):
                 'merchant_key': settings.PAYFAST_MERCHANT_KEY,
                 'amount': str(plan.plan_price),
                 'item_name': plan.plan_name,
-                'return_url': request.build_absolute_uri('/household/household_schedule/'),
+                'return_url': request.build_absolute_uri('/household_schedule/'),
                 'cancel_url': request.build_absolute_uri('/household/pay/'),
                 'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
                 'custom_str1': request.user.email,
