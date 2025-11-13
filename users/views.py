@@ -34,7 +34,7 @@ def register(request):
                     elif user_type == 'household':
                         Customer.objects.create(user=user)
                         print("✅ Created Customer profile")
-                    elif user_type == 'collector':
+                    elif user_type == 'recycler':
                         Collector.objects.create(user=user)
                         print("✅ Created Collector profile")
                     else:
