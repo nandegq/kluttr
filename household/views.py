@@ -82,8 +82,8 @@ def household_payment_info(request):
                     'merchant_key': settings.PAYFAST_MERCHANT_KEY,
                     'amount': str(plan.plan_price),  # The one-time payment
                     'item_name': plan.plan_name,
-                    'return_url': request.build_absolute_uri('/household/success/'),
-                    'cancel_url': request.build_absolute_uri('/household/plan/'),
+                    'return_url': request.build_absolute_uri('/household/household_success/'),
+                    'cancel_url': request.build_absolute_uri('/household/household_plan/'),
                     'notify_url': request.build_absolute_uri('/household/payfast-ipn/'),
                     'custom_str1': request.user.email,
                     'custom_str2': plan.plan_name, }
