@@ -24,9 +24,12 @@ def register(request):
             user_type = form.cleaned_data.get('user_type')
 
             try:
+                profile = Profile.objects.create(
+                    user=user, user_type=user_type)
+
                 with transaction.atomic():
                     print(
-                        f"🟢 Creating user: {user.username}, type: {user_type}")
+                        f"🟢 Creating user: {user.username}, type: {user_type}, profile ID:{profile}")
 
                     if user_type == 'business':
                         Client.objects.create(user=user)
