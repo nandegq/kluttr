@@ -88,7 +88,7 @@ def household_payment_info(request):
                     'custom_str1': request.user.email,
                     'custom_str2': plan.plan_name, }
             query_string = urlencode(data)
-            payfast_url = f'https://sandbox.payfast.co.za/eng/process?{query_string}'
+            payfast_url = f'https://www.payfast.co.za/eng/process?{query_string}'
             return redirect(payfast_url)
         else:
 
@@ -98,7 +98,7 @@ def household_payment_info(request):
                 'amount': str(plan.plan_price),
                 'item_name': plan.plan_name,
                 'return_url': request.build_absolute_uri('/household_schedule/'),
-                'cancel_url': request.build_absolute_uri('/household/pay/'),
+                'cancel_url': request.build_absolute_uri('/household_plan/'),
                 'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
                 'custom_str1': request.user.email,
                 'custom_str2': plan.plan_name,
@@ -110,7 +110,7 @@ def household_payment_info(request):
                 'billing_date': date.today().isoformat(),  # first billing date
             }
             query_string = urlencode(data)
-            payfast_url = f'https://sandbox.payfast.co.za/eng/process?{query_string}'
+            payfast_url = f'https://www.payfast.co.za/eng/process?{query_string}'
             return redirect(payfast_url)
 
     return render(request, 'household_onboard_pay.html')
