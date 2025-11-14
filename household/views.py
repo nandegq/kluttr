@@ -121,7 +121,7 @@ def household_payment_info(request):
 def household_payfast_ipn(request):
     if request.method == 'POST':
         data = request.POST.copy()
-        verify_url = 'https://sandbox.payfast.co.za/eng/process'
+        verify_url = 'https://www.payfast.co.za/eng/process'
         verify_response = requests.post(verify_url, data=data)
 
         if verify_response.text == 'VALID':
