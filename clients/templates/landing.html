@@ -79,57 +79,17 @@
                 <li class="nav-item">
                   <a class="ud-menu-scroll" href="#contact">Contact</a>
                 </li>
-                <li class="nav-item nav-item-has-children">
-                  <a href="javascript:void(0)"> Pages </a>
-                  <ul class="ud-submenu">
-                    <li class="ud-submenu-item">
-                      <a href="about.html" class="ud-submenu-link">
-                        About Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="pricing.html" class="ud-submenu-link">
-                        Pricing Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="contact.html" class="ud-submenu-link">
-                        Contact Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="blog.html" class="ud-submenu-link">
-                        Blog Grid Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="blog-details.html" class="ud-submenu-link">
-                        Blog Details Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="login.html" class="ud-submenu-link">
-                        Sign In Page
-                      </a>
-                    </li>
-                    <li class="ud-submenu-item">
-                      <a href="404.html" class="ud-submenu-link">404 Page</a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
 
-            <div class="navbar-btn d-none d-sm-inline-block">
-              <a href="users/login" class="ud-main-btn ud-login-btn">
-                Sign In
-              </a>
-              <a href="{% url 'users:register' %}" class="ud-main-btn ud-signup-btn">
-                Sign Up
-              </a>
+                <div class="navbar-btn d-none d-sm-inline-block">
+                  <a href="users/login" class="ud-main-btn ud-login-btn">
+                    Sign In
+                  </a>
+                  <a href="{% url 'users:register' %}" class="ud-main-btn ud-signup-btn">
+                    Sign Up
+                  </a>
 
-              </a>
-            </div>
+                  </a>
+                </div>
           </nav>
         </div>
       </div>
@@ -232,7 +192,7 @@
             <div class="ud-feature-content">
               <h3 class="ud-feature-title">Cover all your business locations</h3>
               <p class="ud-feature-desc">
-                One plan covers all business sites.
+                One plan covers all business sites and homes.
               </p>
               <a href="javascript:void(0)" class="ud-feature-link">
                 Learn More
@@ -246,7 +206,7 @@
               <i class="lni lni-layers"></i>
             </div>
             <div class="ud-feature-content">
-              <h3 class="ud-feature-title">Analytics & AI (coming soon)</h3>
+              <h3 class="ud-feature-title">Analytics & AI (AI coming soon)</h3>
               <p class="ud-feature-desc">
                 Access to sustainability reporting and AI analytical features.
               </p>
@@ -268,9 +228,9 @@
         <div class="ud-about-content-wrapper">
           <div class="ud-about-content">
             <span class="tag">About Us</span>
-            <h2>Gauteng-based waste removal.</h2>
+            <h2>We connect you to our network of recycling partners.</h2>
             <p>
-              kluttr aims to provide businesses with stress-free waste removal
+              kluttr aims to provide people and businesses with stress-free waste removal
               through technology and premium service.
             </p>
 
@@ -290,93 +250,6 @@
   </section>
   <!-- ====== About End ====== -->
 
-  <!-- ====== Pricing Start ====== -->
-  <section id="pricing" class="ud-pricing">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="ud-section-title mx-auto text-center">
-            <span>Pricing</span>
-            <h2>Our Pricing Plans</h2>
-            <p>
-              Choose a subscription model that best suits your business needs.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-0 align-items-center justify-content-center">
-        <div class="col-lg-4 col-md-6 col-sm-10">
-          <div class="ud-single-pricing first-item wow fadeInUp" data-wow-delay=".15s">
-            <div class="ud-pricing-header">
-              <h3>BASIC PLAN</h3>
-              <h4>R 2500.00/mo</h4>
-            </div>
-            <div class="ud-pricing-body">
-              <ul>
-                <li>2 pick-ups per month</li>
-                <li>All business locations</li>
-                <li>Pick-ups only</li>
-                <li>Ideal for smaller waste generators</li>
-              </ul>
-            </div>
-            <div class="ud-pricing-footer">
-              <a href="javascript:void(0)" class="ud-main-btn ud-border-btn">
-                Purchase Now
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-10">
-          <div class="ud-single-pricing active wow fadeInUp" data-wow-delay=".1s">
-
-            <div class="ud-pricing-header">
-              <h3>PRO PLAN</h3>
-              <h4>R 4500.00/mo</h4>
-            </div>
-            <div class="ud-pricing-body">
-              <ul>
-                <li>4 pick-ups per month</li>
-                <li>All business locations</li>
-                <li>Pick-ups, basic reporting</li>
-                <li>Ideal for medium waste generators</li>
-                <li></li>
-              </ul>
-            </div>
-            <div class="ud-pricing-footer">
-              <a href="javascript:void(0)" class="ud-main-btn ud-white-btn">
-                Purchase Now
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-10">
-          <div class="ud-single-pricing last-item wow fadeInUp" data-wow-delay=".15s">
-            <div class="ud-pricing-header">
-              <h3>PREMIUM PLAN</h3>
-              <h4>R 8000.00/mo</h4>
-            </div>
-            <div class="ud-pricing-body">
-              <ul>
-                <li>8 pick-ups per month</li>
-                <li>Advanced analytics</li>
-                <li>AI access</li>
-                <li>Specialised waste removal</li>
-                <li>All business locations</li>
-                <li>Ideal for enterprise size customers</li>
-              </ul>
-            </div>
-            <div class="ud-pricing-footer">
-              <a href="javascript:void(0)" class="ud-main-btn ud-border-btn">
-                Purchase Now
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ====== Pricing End ====== -->
 
   <!-- ====== FAQ Start ====== -->
   <section id="faq" class="ud-faq">
@@ -388,10 +261,9 @@
         <div class="col-lg-12">
           <div class="ud-section-title text-center mx-auto">
             <span>FAQ</span>
-            <h2>Any Questions? Answered</h2>
+            <h2>Any Questions?</h2>
             <p>
-              There are many variations of passages of Lorem Ipsum available
-              but the majority have suffered alteration in some form.
+              Below you can find some general questions you might have.
             </p>
           </div>
         </div>
@@ -405,15 +277,12 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>How to use UIdeck?</span>
+                <span>How to use kluttr?</span>
               </button>
               <div id="collapseOne" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  Simply sign up for an account, login, pick a plan,
+                  and start booking pickups for waste in your space.
                 </div>
               </div>
             </div>
@@ -424,15 +293,12 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>How to download icons from Lineicons?</span>
+                <span>What waste does kluttr deal with?</span>
               </button>
               <div id="collapseTwo" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  We deal with all kinds of clutter and waste around you,however please contact us
+                  should you require collection of hazardous material.
                 </div>
               </div>
             </div>
@@ -443,15 +309,12 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>Is GrayGrids part of UIdeck?</span>
+                <span>Is kluttr a waste service provider?</span>
               </button>
               <div id="collapseThree" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  No, we are a digital software platform that connects you to the right
+                  provider and gives you analytics on your waste patterns.
                 </div>
               </div>
             </div>
@@ -464,15 +327,12 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>Can I use this template for commercial project?</span>
+                <span>Who can use kluttr?</span>
               </button>
               <div id="collapseFour" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  Whether you are a business looking to clean up your space regularly or
+                  a household that has waste, we've got you covered.
                 </div>
               </div>
             </div>
@@ -483,15 +343,15 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>Do you have plan releasing Play Pro?</span>
+                <span>How do the plans/subscriptions work?</span>
               </button>
               <div id="collapseFive" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  We have plans tailored to suit both business and
+                  home needs. Businesses get pickups across all their sites and households get pickups
+                  for their singular home. Plans differ based on access to waste analytics and pickups
+                  cursor-not-allowed
+                  per month. Simply pick the one that best suits your needs.
                 </div>
               </div>
             </div>
@@ -502,15 +362,13 @@
                 <span class="icon flex-shrink-0">
                   <i class="lni lni-chevron-down"></i>
                 </span>
-                <span>Where and how to host this template?</span>
+                <span>How can kluttr be best described?</span>
               </button>
               <div id="collapseSix" class="accordion-collapse collapse">
                 <div class="ud-faq-body">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a
-                  type specimen book.
+                  Simply put, kluttr is more than just about waste. Its a movement to keep your space clean
+                  in order to drive creative sustainability. We are making waste removal/recycling more accessible and
+                  efficient for South Africa.
                 </div>
               </div>
             </div>
@@ -521,285 +379,7 @@
   </section>
   <!-- ====== FAQ End ====== -->
 
-  <!-- ====== Testimonials Start ====== -->
-  <section id="testimonials" class="ud-testimonials">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="ud-section-title mx-auto text-center">
-            <span>Testimonials</span>
-            <h2>What our Customers Says</h2>
-            <p>
-              There are many variations of passages of Lorem Ipsum available
-              but the majority have suffered alteration in some form.
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-lg-4 col-md-6">
-          <div class="ud-single-testimonial wow fadeInUp" data-wow-delay=".1s">
-            <div class="ud-testimonial-ratings">
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-            </div>
-            <div class="ud-testimonial-content">
-              <p>
-                “Our members are so impressed. It's intuitive. It's clean.
-                It's distraction free. If you're building a community.
-              </p>
-            </div>
-            <div class="ud-testimonial-info">
-              <div class="ud-testimonial-image">
-                <img src="{% static 'images/testimonials/author-01.png' %}" alt="author" />
-              </div>
-              <div class="ud-testimonial-meta">
-                <h4>Sabo Masties</h4>
-                <p>Founder @UIdeck</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="ud-single-testimonial wow fadeInUp" data-wow-delay=".15s">
-            <div class="ud-testimonial-ratings">
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-            </div>
-            <div class="ud-testimonial-content">
-              <p>
-                “Our members are so impressed. It's intuitive. It's clean.
-                It's distraction free. If you're building a community.
-              </p>
-            </div>
-            <div class="ud-testimonial-info">
-              <div class="ud-testimonial-image">
-                <img src="{% static 'images/testimonials/author-02.png' %}" alt="author" />
-              </div>
-              <div class="ud-testimonial-meta">
-                <h4>Margin Gesmu</h4>
-                <p>Founder @Lineicons</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="ud-single-testimonial wow fadeInUp" data-wow-delay=".2s">
-            <div class="ud-testimonial-ratings">
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-              <i class="lni lni-star-filled"></i>
-            </div>
-            <div class="ud-testimonial-content">
-              <p>
-                “Our members are so impressed. It's intuitive. It's clean.
-                It's distraction free. If you're building a community.
-              </p>
-            </div>
-            <div class="ud-testimonial-info">
-              <div class="ud-testimonial-image">
-                <img src="{% static 'images/testimonials/author-03.png' %}" alt="author" />
-              </div>
-              <div class="ud-testimonial-meta">
-                <h4>William Smith</h4>
-                <p>Founder @GrayGrids</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="ud-brands wow fadeInUp" data-wow-delay=".2s">
-            <div class="ud-title">
-              <h6>Trusted and Used by</h6>
-            </div>
-            <div class="ud-brands-logo">
-              <div class="ud-single-logo">
-                <img src="{% static 'images/brands/ayroui.svg' %}" alt="ayroui" />
-              </div>
-              <div class="ud-single-logo">
-                <img src="{% static 'images/brands/uideck.svg' %}" alt="uideck" />
-              </div>
-              <div class="ud-single-logo">
-                <img src="{% static 'images/brands/graygrids.svg' %}" alt="graygrids" />
-              </div>
-              <div class="ud-single-logo">
-                <img src="{% static 'images/brands/lineicons.svg' %}" alt="lineicons" />
-              </div>
-              <div class="ud-single-logo">
-                <img src="{% static 'images/brands/ecommerce-html.svg' %}" alt="ecommerce-html" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ====== Testimonials End ====== -->
-
-  <!-- ====== Team Start ====== -->
-  <section id="team" class="ud-team">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="ud-section-title mx-auto text-center">
-            <span>Our Team</span>
-            <h2>Meet The Team</h2>
-            <p>
-              There are many variations of passages of Lorem Ipsum available
-              but the majority have suffered alteration in some form.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xl-3 col-lg-3 col-sm-6">
-          <div class="ud-single-team wow fadeInUp" data-wow-delay=".1s">
-            <div class="ud-team-image-wrapper">
-              <div class="ud-team-image">
-                <img src="{% static 'images/team/team-01.png' %}" alt="team" />
-              </div>
-
-              <img src="{% static 'images/team/dotted-shape.svg' %}" alt="shape" class="shape shape-1" />
-              <img src="{% static 'images/team/shape-2.svg' %}" alt="shape" class="shape shape-2" />
-            </div>
-            <div class="ud-team-info">
-              <h5>Adveen Desuza</h5>
-              <h6>UI Designer</h6>
-            </div>
-            <ul class="ud-team-socials">
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-facebook-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-twitter-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-instagram-filled"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-sm-6">
-          <div class="ud-single-team wow fadeInUp" data-wow-delay=".15s">
-            <div class="ud-team-image-wrapper">
-              <div class="ud-team-image">
-                <img src="{% static 'images/team/team-02.png' %}" alt="team" />
-              </div>
-
-              <img src="{% static 'images/team/dotted-shape.svg' %}" alt="shape" class="shape shape-1" />
-              <img src="{% static 'images/team/shape-2.svg' %}" alt="shape" class="shape shape-2" />
-            </div>
-            <div class="ud-team-info">
-              <h5>Jezmin uniya</h5>
-              <h6>Product Designer</h6>
-            </div>
-            <ul class="ud-team-socials">
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-facebook-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-twitter-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-instagram-filled"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-sm-6">
-          <div class="ud-single-team wow fadeInUp" data-wow-delay=".2s">
-            <div class="ud-team-image-wrapper">
-              <div class="ud-team-image">
-                <img src="{% static 'images/team/team-03.png' %}" alt="team" />
-              </div>
-
-              <img src="{% static 'images/team/dotted-shape.svg' %}" alt="shape" class="shape shape-1" />
-              <img src="{% static 'images/team/shape-2.svg' %}" alt="shape" class="shape shape-2" />
-            </div>
-            <div class="ud-team-info">
-              <h5>Andrieo Gloree</h5>
-              <h6>App Developer</h6>
-            </div>
-            <ul class="ud-team-socials">
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-facebook-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-twitter-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-instagram-filled"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-xl-3 col-lg-3 col-sm-6">
-          <div class="ud-single-team wow fadeInUp" data-wow-delay=".25s">
-            <div class="ud-team-image-wrapper">
-              <div class="ud-team-image">
-                <img src="{% static 'images/team/team-04.png' %}" alt="team" />
-              </div>
-
-              <img src="{% static 'images/team/dotted-shape.svg' %}" alt="shape" class="shape shape-1" />
-              <img src="{% static 'images/team/shape-2.svg' %}" alt="shape" class="shape shape-2" />
-            </div>
-            <div class="ud-team-info">
-              <h5>Jackie Sanders</h5>
-              <h6>Content Writer</h6>
-            </div>
-            <ul class="ud-team-socials">
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-facebook-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-twitter-filled"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/MusharofChy">
-                  <i class="lni lni-instagram-filled"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ====== Team End ====== -->
 
   <!-- ====== Contact Start ====== -->
   <section id="contact" class="ud-contact">
@@ -810,8 +390,8 @@
             <div class="ud-contact-title">
               <span>CONTACT US</span>
               <h2>
-                Let’s talk about <br />
-                Love to hear from you!
+                Let’s talk<br />
+                We would Love to hear from you!
               </h2>
             </div>
             <div class="ud-contact-info-wrapper">
@@ -830,7 +410,7 @@
                 </div>
                 <div class="ud-info-meta">
                   <h5>How Can We Help?</h5>
-                  <p>kluttrx@google.com</p>
+                  <p>info@kluttr.co.za</p>
                 </div>
               </div>
             </div>
@@ -893,22 +473,17 @@
               </p>
               <ul class="ud-widget-socials">
                 <li>
-                  <a href="https://twitter.com/MusharofChy">
+                  <a href="https://facebook.com/kluttr">
                     <i class="lni lni-facebook-filled"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="https://twitter.com/MusharofChy">
-                    <i class="lni lni-twitter-filled"></i>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://twitter.com/MusharofChy">
+                  <a href="https://instagram.com/kluttr_">
                     <i class="lni lni-instagram-filled"></i>
                   </a>
                 </li>
                 <li>
-                  <a href="https://twitter.com/MusharofChy">
+                  <a href="https://linkedin.com/kluttr">
                     <i class="lni lni-linkedin-original"></i>
                   </a>
                 </li>
@@ -954,90 +529,25 @@
               </ul>
             </div>
           </div>
-          <div class="col-xl-2 col-lg-3 col-md-6 col-sm-6">
-            <div class="ud-widget">
-              <h5 class="ud-widget-title">Our Products</h5>
-              <ul class="ud-widget-links">
-                <li>
-                  <a href="https://lineicons.com/" rel="nofollow noopner" target="_blank">Lineicons
-                  </a>
-                </li>
-                <li>
-                  <a href="https://ecommercehtml.com/" rel="nofollow noopner" target="_blank">Ecommerce HTML</a>
-                </li>
-                <li>
-                  <a href="https://ayroui.com/" rel="nofollow noopner" target="_blank">Ayro UI</a>
-                </li>
-                <li>
-                  <a href="https://graygrids.com/" rel="nofollow noopner" target="_blank">Plain Admin</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-xl-3 col-lg-6 col-md-8 col-sm-10">
-            <div class="ud-widget">
-              <h5 class="ud-widget-title">Partners</h5>
-              <ul class="ud-widget-brands">
-                <li>
-                  <a href="https://ayroui.com/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/ayroui.svg' %}" alt="ayroui" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://ecommercehtml.com/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/ecommerce-html.svg' %}" alt="ecommerce-html" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://graygrids.com/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/graygrids.svg' %}" alt="graygrids" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://lineicons.com/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/lineicons.svg' %}" alt="lineicons" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://uideck.com/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/uideck.svg' %}" alt="uideck" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://tailwindtemplates.co/" rel="nofollow noopner" target="_blank">
-                    <img src="{% static 'images/footer/brands/tailwindtemplates.svg' %}" alt="tailwindtemplates" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+
+          <a href="javascript:void(0)">Privacy policy</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">Support policy</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">Terms of service</a>
+          </li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <p class="ud-footer-bottom-right">
+
+
+          </p>
         </div>
       </div>
     </div>
-    <div class="ud-footer-bottom">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-8">
-            <ul class="ud-footer-bottom-left">
-              <li>
-                <a href="javascript:void(0)">Privacy policy</a>
-              </li>
-              <li>
-                <a href="javascript:void(0)">Support policy</a>
-              </li>
-              <li>
-                <a href="javascript:void(0)">Terms of service</a>
-              </li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <p class="ud-footer-bottom-right">
-              Designed and Developed by the founder.
-
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   </footer>
   <!-- ====== Footer End ====== -->
