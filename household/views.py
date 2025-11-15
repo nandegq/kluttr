@@ -92,6 +92,10 @@ def household_payment_info(request):
         return redirect('household_plan')
 
     if request.method == 'POST':
+        # Skip PayFast for free plans
+        if float(plan.plan_price) == 0:
+            messages.success(request, "Free plan activated successfully.")
+            return redirect('household_schedule')
 
         # -------------------------------
         # BASE FIELDS FOR ALL PAYMENTS
