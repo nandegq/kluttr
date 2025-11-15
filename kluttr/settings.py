@@ -147,7 +147,7 @@ LOGOUT_REDIRECT_URL = 'users:login'
 
 PAYFAST_MERCHANT_ID = os.getenv("PAYFAST_MERCHANT_ID")
 PAYFAST_MERCHANT_KEY = os.getenv("PAYFAST_MERCHANT_KEY")
-PAYFAST_TEST = False
+PAYFAST_TEST = True
 PAYFAST_PASSPHRASE = os.getenv("PAYFAST_PASSPHRASE")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
