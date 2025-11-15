@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 class CustomerPlans(models.Model):
     customer_pickups_per_month = models.PositiveIntegerField()
     customer_pickups_done = models.PositiveIntegerField(default=0)
-    customer_all_locations = models.BooleanField(default=True)
+    once_off_service = models.BooleanField(default=False)
     customerplan_is_popular = models.BooleanField(default=False)
     plan_name = models.CharField(max_length=300, null=True, blank=True)
     plan_price = models.DecimalField(
