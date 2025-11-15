@@ -21,6 +21,10 @@
                 {% else %}
                 single location only
                 {% endif %}
+                {% if plan.once_off_service %}
+                , Once-off Pickup
+                {% endif %}
+
             </p>
 
             <p class="text-3xl font-bold mb-4 text-purple-500">R{{ plan.plan_price }}</p>
