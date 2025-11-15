@@ -56,16 +56,20 @@ def household_plan(request):
 
 
 def generate_signature(data, passphrase):
-    # Sort data alphabetically
-    sorted_data = sorted(data.items())
-    query_string = urlencode(sorted_data)
+    # 1. Remove empty fields
+    clean_data = {k: v for k, v in data.items() if v}
 
-    # Add passphrase
-    if passphrase:
-        query_string = f"{query_string}&passphrase={passphrase}"
+    # 2. Sort alphabetically
+    items = sorted(clean_data.items())
 
-    # Generate MD5
-    return hashlib.md5(query_string.encode('utf-8')).hexdigest()
+    # 3. Create query string manually (no urlencode!)
+    sig = "&".join(f"{k}={v}" for k, v in items)
+
+    # 4. Add passphrase
+    sig = f"{sig}&passphrase={passphrase}"
+
+    # 5. MD5 hash
+    return hashlib.md5(sig.encode('utf-8')).hexdigest()
 
 
 @login_required
@@ -124,7 +128,7 @@ def household_payment_info(request):
 
         # Redirect
         payfast_url = "https://www.payfast.co.za/eng/process?" + \
-            urlencode(data)
+            "&".join(f"{k}={v}" for k, v in data.items())
         return redirect(payfast_url)
 
     return render(request, 'household_onboard_pay.html')
