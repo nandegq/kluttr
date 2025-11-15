@@ -14,6 +14,7 @@ from urllib.parse import urlencode
 from datetime import date
 import requests
 from django.contrib.auth.models import User
+import hashlib
 
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
 # make sure this form exists
@@ -54,7 +55,19 @@ def household_plan(request):
     return render(request, 'household_onboard_plan.html', {'plans': plans})
 
 
-# 💳 3️⃣ Payment Page (PayFast Integration)
+def generate_signature(data, passphrase):
+    # Sort data alphabetically
+    sorted_data = sorted(data.items())
+    query_string = urlencode(sorted_data)
+
+    # Add passphrase
+    if passphrase:
+        query_string = f"{query_string}&passphrase={passphrase}"
+
+    # Generate MD5
+    return hashlib.md5(query_string.encode('utf-8')).hexdigest()
+
+
 @login_required
 def household_payment_info(request):
     customer = request.user.customer
@@ -69,49 +82,50 @@ def household_payment_info(request):
         except CustomerPlans.DoesNotExist:
             messages.error(request, "Selected plan does not exist.")
             return redirect('household_plan')
-    else:
-        plan = customer.customer_plan
 
-        if not plan:
-            messages.error(request, "Please select a plan first.")
-            return redirect('household_plan')
+    if not plan:
+        messages.error(request, "Please select a plan first.")
+        return redirect('household_plan')
 
     if request.method == 'POST':
-        if plan.plan_name.lower() == 'on-demand':
-            data = {'merchant_id': settings.PAYFAST_MERCHANT_ID,
-                    'merchant_key': settings.PAYFAST_MERCHANT_KEY,
-                    'amount': str(plan.plan_price),  # The one-time payment
-                    'item_name': plan.plan_name,
-                    'return_url': request.build_absolute_uri('/household_schedule/'),
-                    'cancel_url': request.build_absolute_uri('/household/household_plan/'),
-                    'notify_url': request.build_absolute_uri('/household/payfast-ipn/'),
-                    'custom_str1': request.user.email,
-                    'custom_str2': plan.plan_name, }
-            query_string = urlencode(data)
-            payfast_url = f'https://www.payfast.co.za/eng/process?{query_string}'
-            return redirect(payfast_url)
-        else:
 
-            data = {
-                'merchant_id': settings.PAYFAST_MERCHANT_ID,
-                'merchant_key': settings.PAYFAST_MERCHANT_KEY,
-                'amount': str(plan.plan_price),
-                'item_name': plan.plan_name,
-                'return_url': request.build_absolute_uri('/household_schedule/'),
-                'cancel_url': request.build_absolute_uri('/household_plan/'),
-                'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
-                'custom_str1': request.user.email,
-                'custom_str2': plan.plan_name,
-                # Subscription fields
-                'subscription_type': 1,  # 1 = subscription
-                'recurring_amount': str(plan.plan_price),
-                'frequency': 3,  # 3 = monthly
-                'cycles': 0,  # 0 = indefinite
-                'billing_date': date.today().isoformat(),  # first billing date
-            }
-            query_string = urlencode(data)
-            payfast_url = f'https://www.payfast.co.za/eng/process?{query_string}'
-            return redirect(payfast_url)
+        # -------------------------------
+        # BASE FIELDS FOR ALL PAYMENTS
+        # -------------------------------
+        data = {
+            "merchant_id": settings.PAYFAST_MERCHANT_ID,
+            "merchant_key": settings.PAYFAST_MERCHANT_KEY,
+            "amount": str(plan.plan_price),
+            "item_name": plan.plan_name,
+            "return_url": request.build_absolute_uri('/household_schedule/'),
+            "cancel_url": request.build_absolute_uri('/household_plan/'),
+            "notify_url": request.build_absolute_uri('/household/payfast-ipn/'),
+            "custom_str1": request.user.email,
+            "custom_str2": plan.plan_name,
+        }
+
+        # -------------------------------
+        # SUBSCRIPTION LOGIC
+        # -------------------------------
+        if plan.plan_name.lower() != "on-demand":
+            data.update({
+                "subscription_type": 1,
+                "recurring_amount": str(plan.plan_price),
+                "frequency": 3,    # monthly
+                "cycles": 0,
+                "billing_date": date.today().isoformat(),
+            })
+
+        # -------------------------------
+        # SIGNATURE (CRITICAL)
+        # -------------------------------
+        signature = generate_signature(data, settings.PAYFAST_PASSPHRASE)
+        data["signature"] = signature
+
+        # Redirect
+        payfast_url = "https://www.payfast.co.za/eng/process?" + \
+            urlencode(data)
+        return redirect(payfast_url)
 
     return render(request, 'household_onboard_pay.html')
 
@@ -121,17 +135,20 @@ def household_payment_info(request):
 def household_payfast_ipn(request):
     if request.method == 'POST':
         data = request.POST.copy()
-        verify_url = 'https://www.payfast.co.za/eng/process'
+
+        verify_url = "https://www.payfast.co.za/eng/query/validate"  # FIXED
+
         verify_response = requests.post(verify_url, data=data)
 
-        if verify_response.text == 'VALID':
-            user_email = data.get('custom_str1')
-            plan_name = data.get('custom_str2')
+        if verify_response.text == "VALID":
+            user_email = data.get("custom_str1")
+            plan_name = data.get("custom_str2")
             send_confirmation_email_html(user_email, plan_name)
-            return HttpResponse('OK')
-        else:
-            return HttpResponse('INVALID')
-    return HttpResponse('Method not allowed', status=405)
+            return HttpResponse("OK")
+
+        return HttpResponse("INVALID", status=400)
+
+    return HttpResponse("Method not allowed", status=405)
 
 
 def send_confirmation_email_html(user_email, plan_name):
