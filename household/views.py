@@ -92,18 +92,25 @@ def household_payment_info(request):
         return redirect('household_plan')
 
     if request.method == 'POST':
-        # Skip PayFast for free plans
-        if float(plan.plan_price) == 0:
+
+        # ⭐ SAFE PRICE HANDLING
+        try:
+            price = float(plan.plan_price or 0)
+        except:
+            price = 0
+
+    # ⭐ FREE PLAN HANDLER
+        if price == 0:
             messages.success(request, "Free plan activated successfully.")
             return redirect('household_schedule')
 
-        # -------------------------------
-        # BASE FIELDS FOR ALL PAYMENTS
-        # -------------------------------
+    # -------------------------------
+    # PAYFAST PAYMENT DATA
+    # -------------------------------
         data = {
             "merchant_id": settings.PAYFAST_MERCHANT_ID,
             "merchant_key": settings.PAYFAST_MERCHANT_KEY,
-            "amount": str(plan.plan_price),
+            "amount": str(price),
             "item_name": plan.plan_name,
             "return_url": request.build_absolute_uri('/household_schedule/'),
             "cancel_url": request.build_absolute_uri('/household_plan/'),
