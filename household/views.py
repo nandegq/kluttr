@@ -55,21 +55,21 @@ def household_plan(request):
     return render(request, 'household_onboard_plan.html', {'plans': plans})
 
 
-def generate_signature(data, passphrase):
+# def generate_signature(data, passphrase):
     # 1. Remove empty fields
-    clean_data = {k: v for k, v in data.items() if v}
+    # clean_data = {k: v for k, v in data.items() if v}
 
     # 2. Sort alphabetically
-    items = sorted(clean_data.items())
+    # items = sorted(clean_data.items())
 
     # 3. Create query string manually (no urlencode!)
-    sig = "&".join(f"{k}={v}" for k, v in items)
+    # sig = "&".join(f"{k}={v}" for k, v in items)
 
     # 4. Add passphrase
-    sig = f"{sig}&passphrase={passphrase}"
+    # sig = f"{sig}&passphrase={passphrase}"
 
     # 5. MD5 hash
-    return hashlib.md5(sig.encode('utf-8')).hexdigest()
+    # return hashlib.md5(sig.encode('utf-8')).hexdigest()
 
 
 @login_required
@@ -123,12 +123,11 @@ def household_payment_info(request):
         # -------------------------------
         # SIGNATURE (CRITICAL)
         # -------------------------------
-        signature = generate_signature(data, settings.PAYFAST_PASSPHRASE)
-        data["signature"] = signature
 
         # Redirect
-        payfast_url = "https://www.payfast.co.za/eng/process?" + \
-            "&".join(f"{k}={v}" for k, v in data.items())
+        payfast_url = "https://sandbox.payfast.co.za/eng/process?" + \
+            urlencode(data)
+
         return redirect(payfast_url)
 
     return render(request, 'household_onboard_pay.html')
@@ -140,7 +139,7 @@ def household_payfast_ipn(request):
     if request.method == 'POST':
         data = request.POST.copy()
 
-        verify_url = "https://www.payfast.co.za/eng/query/validate"  # FIXED
+        verify_url = "https://sandbox.payfast.co.za/eng/query/validate"  # FIXED
 
         verify_response = requests.post(verify_url, data=data)
 
