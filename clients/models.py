@@ -65,7 +65,8 @@ class Pickups(models.Model):
     pickup_plan = models.ForeignKey(PickupPlan, on_delete=models.CASCADE)
     scheduled_date = models.DateField()
     pickup_time = models.TimeField(null=True, blank=True)
-    completed = models.BooleanField(default=False)
+    completed = models.CharField(
+        max_length=300, choices=PICKUP_STATUSES, default='pending')
     notes = models.TextField(blank=True, null=True)
     # make it choice field later
     waste_type = models.CharField(

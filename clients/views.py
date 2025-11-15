@@ -62,8 +62,8 @@ def payment_info(request):
                 'merchant_key': settings.PAYFAST_MERCHANT_KEY,
                 'amount': str(plan.price),
                 'item_name': plan.name,
-                'return_url': request.build_absolute_uri('/clients/schedule/'),
-                'cancel_url': request.build_absolute_uri('/clients/pay/'),
+                'return_url': request.build_absolute_uri('/schedule_pickup/'),
+                'cancel_url': request.build_absolute_uri('/select_plan/'),
                 'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
                 'custom_str1': request.user.email,
                 'custom_str2': plan.name,
@@ -75,7 +75,7 @@ def payment_info(request):
                 'billing_date': date.today().isoformat(),  # first billing date (today)
                 }
         query_string = urlencode(data)
-        payfast_url = f'https://sandbox.payfast.co.za/eng/process?{query_string}'
+        payfast_url = f'https://www.payfast.co.za/eng/process?{query_string}'
         return redirect(payfast_url)
 
     return render(request, 'client_onboard_pay.html')
@@ -88,7 +88,7 @@ def payfast_ipn(request):
         data = request.POST.copy()
 
         # Step 2: Verify the payment with PayFast
-        verify_url = 'https://sandbox.payfast.co.za/eng/process'  # sandbox
+        verify_url = 'https://www.payfast.co.za/eng/process'  # sandbox
         verify_response = requests.post(verify_url, data=data)
         if verify_response.text == 'VALID':
             # Payment is verified
