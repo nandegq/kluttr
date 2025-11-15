@@ -15,6 +15,7 @@ from datetime import date
 import requests
 from django.contrib.auth.models import User
 import hashlib
+from django.urls import reverse
 
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
 # make sure this form exists
@@ -112,8 +113,8 @@ def household_payment_info(request):
             "merchant_key": settings.PAYFAST_MERCHANT_KEY,
             "amount": str(price),
             "item_name": plan.plan_name,
-            "return_url": request.build_absolute_uri('household/household_schedule/'),
-            "cancel_url": request.build_absolute_uri('household/household_plan/'),
+            "return_url": request.build_absolute_uri(reverse('household_schedule/')),
+            "cancel_url": request.build_absolute_uri(reverse('household/household_plan/')),
             "notify_url": request.build_absolute_uri('/household/payfast-ipn/'),
             "custom_str1": request.user.email,
             "custom_str2": plan.plan_name,
