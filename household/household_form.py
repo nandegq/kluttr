@@ -29,7 +29,7 @@ class CustomerSchedulingForm(forms.ModelForm):
 
     def clean_customer_scheduled_date(self):
         scheduled_date = self.cleaned_data.get('customer_scheduled_date')
-        if self.customer_plan and self.customer_plan.household_pickups_done >= self.customer_plan.household_plan.pickups_per_month:
+        if self.customer_plan and self.customer_plan.household_pickups_done >= self.customer_plan.household_plan.customer_pickups_per_month:
             raise forms.ValidationError(
                 "You have already scheduled all your pickups for this month."
             )
