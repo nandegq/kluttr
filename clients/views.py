@@ -37,7 +37,7 @@ def business_onboarding(request):
 
 @login_required
 def select_plan(request):
-    plans = Plans.objects.all()
+    plans = PickupPlan.objects.all()
     if request.method == 'POST':
         plan_id = request.POST.get('plan')
         if plan_id:
