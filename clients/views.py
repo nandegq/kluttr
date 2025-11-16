@@ -15,7 +15,7 @@ import requests
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django import forms
-
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
@@ -37,19 +37,25 @@ def business_onboarding(request):
 
 @login_required
 def select_plan(request):
-    plans = Plans.objects.all()
-    if request.method == 'POST':
-        plan_id = request.POST.get('plan')
-        if plan_id:
-            selected_plan = Plans.objects.get(id=plan_id)
+    try:
+        plans = Plans.objects.all()
 
-            # Ensure the user has a customer profile
+        if request.method == 'POST':
+            plan_id = request.POST.get('plan')
+            if not plan_id:
+                return HttpResponse("No plan selected", status=400)
+
+            selected_plan = get_object_or_404(Plans, id=plan_id)
             client = request.user.client
             client.selected_plan = selected_plan
             client.save()
             return redirect('payment_info')
 
-    return render(request, 'client_onboard_plan.html', {'plans': plans})
+        return render(request, 'client_onboard_plan.html', {'plans': plans})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return HttpResponse(f"Error: {e}")
 
 
 @login_required
