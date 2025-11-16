@@ -49,7 +49,7 @@ def select_plan(request):
             client = request.user.client
             client.selected_plan = selected_plan
             client.save()
-            return redirect('payment_info')
+            return redirect('clients:payment_info')
 
         return render(request, 'client_onboard_plan.html', {'plans': plans})
     except Exception as e:
