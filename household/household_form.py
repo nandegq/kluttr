@@ -3,7 +3,6 @@ from .models import CustomerPickups
 
 
 class CustomerSchedulingForm(forms.ModelForm):
-
     class Meta:
         model = CustomerPickups
         fields = ['customer_scheduled_date', 'customer_pickup_time',
@@ -18,21 +17,20 @@ class CustomerSchedulingForm(forms.ModelForm):
 
     def __init__(self, *args, customer_plan=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.customer_plan = customer_plan
+        self.customer_plan = customer_plan  # ✅ store the pickup_plan passed in view
 
     def save(self, commit=True):
         pickup = super().save(commit=False)
-        if self.customer_pickup_plan:
-            pickup.customer_pickup_plan = self.customer_pickup_plan  # ✅ correct field name
+        if self.customer_plan:
+            pickup.customer_pickup_plan = self.customer_plan  # ✅ use correct attribute
         if commit:
             pickup.save()
         return pickup
 
-    def customer_scheduled_date(self):
-        date = self.cleaned_data['customer_scheduled_date']
-    # Check if already maxed out
-        if self.customer_pickup_plan.customer_pickups_done >= self.customer_pickup_plan.plan_name.customer_pickups_per_month:
+    def clean_customer_scheduled_date(self):
+        scheduled_date = self.cleaned_data.get('customer_scheduled_date')
+        if self.customer_plan and self.customer_plan.household_pickups_done >= self.customer_plan.household_plan.pickups_per_month:
             raise forms.ValidationError(
                 "You have already scheduled all your pickups for this month."
             )
-        return date
+        return scheduled_date
