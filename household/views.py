@@ -109,9 +109,9 @@ def household_payment_info(request):
             "merchant_key": settings.PAYFAST_MERCHANT_KEY,
             "amount": str(price),
             "item_name": plan.plan_name,
-            "return_url": request.build_absolute_uri(reverse('household_schedule/')),
-            "cancel_url": request.build_absolute_uri(reverse('household/household_plan/')),
-            "notify_url": request.build_absolute_uri('/household/payfast-ipn/'),
+            "return_url": request.build_absolute_uri(reverse('schedule')),
+            "cancel_url": request.build_absolute_uri(reverse('plan')),
+            "notify_url": request.build_absolute_uri('pay-ipn'),
             "custom_str1": request.user.email,
             "custom_str2": plan.plan_name,
         }
