@@ -16,6 +16,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django import forms
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 # Create your views here.
 
 
@@ -72,8 +73,8 @@ def payment_info(request):
                 'merchant_key': settings.PAYFAST_MERCHANT_KEY,
                 'amount': str(plan.price),
                 'item_name': plan.name,
-                'return_url': request.build_absolute_uri('clients/schedule_pickup/'),
-                'cancel_url': request.build_absolute_uri('clients/select_plan/'),
+                'return_url': request.build_absolute_uri(reverse('clients:schedule_pickup/')),
+                'cancel_url': request.build_absolute_uri(reverse('clients:select_plan/')),
                 'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
                 'custom_str1': request.user.email,
                 'custom_str2': plan.name,
