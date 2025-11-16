@@ -37,7 +37,7 @@ def business_onboarding(request):
 
 @login_required
 def select_plan(request):
-    plan = PickupPlan.objects.all()
+    plans = PickupPlan.objects.all()
     if request.method == 'POST':
         plan_id = request.POST.get('plan')
         if plan_id:
@@ -49,7 +49,7 @@ def select_plan(request):
             client.save()
             return redirect('payment_info')
 
-    return render(request, 'client_onboard_plan.html', {'plan': plan})
+    return render(request, 'client_onboard_plan.html', {'plans': plans})
 
 
 @login_required
