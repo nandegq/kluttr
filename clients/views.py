@@ -43,7 +43,7 @@ def select_plan(request):
         if plan_id:
             selected_plan = Plans.objects.get(id=plan_id)
 
-        # Ensure the user has a customer profile
+            # Ensure the user has a customer profile
             client = request.user.client
             client.selected_plan = selected_plan
             client.save()
