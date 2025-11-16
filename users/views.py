@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from clients.models import Client
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm
 from household.models import Customer
@@ -94,4 +94,5 @@ def login_view(request):
 
 
 def logout_view(request):
-    return redirect('login')
+    logout(request)
+    return redirect('users:login')
