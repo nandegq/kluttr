@@ -20,6 +20,7 @@ from django.urls import reverse
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
 # make sure this form exists
 from household.household_form import CustomerSchedulingForm
+import traceback
 
 
 # 🏠 1️⃣ Onboarding View
@@ -174,57 +175,56 @@ def send_confirmation_email_html(user_email, plan_name):
 # 🚛 6️⃣ Schedule Pickup
 @login_required
 def household_schedule(request):
-    customer = request.user.customer
+    try:
+        customer = request.user.customer
 
-    # 🧩 Ensure customer has selected a plan first
-    if not customer.customer_plan:
-        messages.error(
-            request, "Please select a plan before scheduling a pickup.")
-        return redirect('household_plan')
+        if not customer.customer_plan:
+            messages.error(
+                request, "Please select a plan before scheduling a pickup.")
+            return redirect('household:household_plan')
 
-    today = date.today()
-    current_month = date(today.year, today.month, 1)
+        today = date.today()
+        current_month = date(today.year, today.month, 1)
 
-    # ✅ Get or create the PickupPlan properly
-    pickup_plan, created = CustomerPickupPlan.objects.get_or_create(
-        household_customer=customer,
-        household_month=current_month,
-        defaults={
-            'household_plan': customer.customer_plan,
-            'household_pickups_done': 0
-        }
-    )
+        pickup_plan, created = CustomerPickupPlan.objects.get_or_create(
+            household_customer=customer,
+            household_month=current_month,
+            defaults={
+                'household_plan': customer.customer_plan,
+                'household_pickups_done': 0
+            }
+        )
 
-    # 🧾 Handle form submission
-    if request.method == 'POST':
-        form = CustomerSchedulingForm(request.POST, customer_plan=pickup_plan)
-        if form.is_valid():
-            pickup = form.save(commit=False)
-            pickup.customer_pickup_plan = pickup_plan  # ✅ correct relation
-            pickup.save()
+        if request.method == 'POST':
+            form = CustomerSchedulingForm(
+                request.POST, request.FILES, customer_plan=pickup_plan)
+            if form.is_valid():
+                pickup = form.save()
+                pickup_plan.household_pickups_done += 1
+                pickup_plan.save()
+                messages.success(request, "Pickup scheduled successfully!")
+                return redirect('household:household_success')
+            else:
+                print(form.errors)  # 👈 prints validation errors
 
-            # ✅ Update pickup count
-            pickup_plan.household_pickups_done += 1
-            pickup_plan.save()
+        else:
+            form = CustomerSchedulingForm(customer_plan=pickup_plan)
 
-            messages.success(request, "Pickup scheduled successfully!")
-            return redirect('household:household_success')
-    else:
-        form = CustomerSchedulingForm(customer_plan=pickup_plan)
+        return render(request, 'household_onboard_schedule.html', {
+            'form': form,
+            'selected_plan': pickup_plan.household_plan,
+            'pickup_plan': pickup_plan
+        })
 
-    return render(request, 'household_onboard_schedule.html', {
-        'form': form,
-        'selected_plan': pickup_plan.household_plan,
-        'pickup_plan': pickup_plan
-    })
+    except Exception as e:
+        traceback.print_exc()
+        return HttpResponse(f"Error: {e}")
 
 
-# ✅ 7️⃣ Success Page
 def household_success(request):
     return render(request, 'household_success.html')
 
 
-# 📊 8️⃣ Dashboard
 @login_required
 def household_dashboard(request):
     return render(request, 'household_dashboard.html')
