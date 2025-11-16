@@ -47,11 +47,7 @@ def household_plan(request):
             customer = request.user.customer
             customer.customer_plan = selected_plan
             customer.save()
-            if selected_plan.plan_name.lower() == 'on-demand':
-                return redirect('ondemand_payment')
-            else:
-
-                return redirect('household_payment_info')
+            return redirect('household_payment_info')
 
     return render(request, 'household_onboard_plan.html', {'plans': plans})
 

@@ -32,19 +32,23 @@ def business_onboarding(request):
         profile.save()
         return redirect('clients:business_dashboard')
 
-    return render(request, 'client_onboard_plan.html')
+    return render(request, 'business_dashboard.html')
 
 
 @login_required
 def select_plan(request):
     plans = Plans.objects.all()
     if request.method == 'POST':
+        plan_id = request.POST.get('plan')
+        if plan_id:
+            selected_plan = PickupPlan.objects.get(id=plan_id)
 
-        selected_plan_id = request.POST.get('plans')
-        selected_plan = Plans.objects.get(id=selected_plan_id)
-        request.user.profile.plan = selected_plan
-        request.user.profile.save()
-        return redirect('clients:payment_info')
+        # Ensure the user has a customer profile
+            client = request.user.client
+            client.client_plan = selected_plan
+            client.save()
+            return redirect('payment_info')
+
     return render(request, 'client_onboard_plan.html', {'plans': plans})
 
 
