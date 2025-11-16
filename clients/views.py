@@ -45,7 +45,7 @@ def select_plan(request):
 
         # Ensure the user has a customer profile
             client = request.user.client
-            client.client_plan = selected_plan
+            client.selected_plan = selected_plan
             client.save()
             return redirect('payment_info')
 
