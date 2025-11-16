@@ -74,7 +74,7 @@ def payment_info(request):
                 'amount': str(plan.price),
                 'item_name': plan.name,
                 'return_url': request.build_absolute_uri(reverse('clients:schedule')),
-                'cancel_url': request.build_absolute_uri(reverse('clients:plan')),
+                'cancel_url': request.build_absolute_uri(reverse('clients:select_plan')),
                 'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
                 'custom_str1': request.user.email,
                 'custom_str2': plan.name,
