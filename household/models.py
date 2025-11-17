@@ -83,4 +83,4 @@ class CustomerPickupPlan(models.Model):
     household_pickups_done = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.household_customer} - {self.plan_name} ({self.household_month.strftime('%B %Y')})"
+        return f"{self.household_customer} - {self.household_plan.plan_name} ({self.household_month.strftime('%B %Y')})"
