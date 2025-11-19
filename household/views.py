@@ -199,7 +199,8 @@ def household_schedule(request):
             form = CustomerSchedulingForm(
                 request.POST, request.FILES, customer_plan=pickup_plan)
             if form.is_valid():
-                pickup = form.save()
+                pickup = form.save(commit=False)
+                pickup.customer_pickup_plan = pickup_plan.household_plan
                 pickup_plan.household_pickups_done += 1
                 pickup_plan.save()
                 messages.success(request, "Pickup scheduled successfully!")
