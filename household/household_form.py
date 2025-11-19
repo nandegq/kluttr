@@ -6,12 +6,11 @@ class CustomerSchedulingForm(forms.ModelForm):
     class Meta:
         model = CustomerPickups
         fields = ['customer_scheduled_date', 'customer_pickup_time',
-                  'customer_waste_type', 'customer_notes', 'customer_weight', 'customer_images']
+                  'customer_waste_type', 'customer_notes', 'customer_waste_size', 'customer_images']
         widgets = {
             'customer_scheduled_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full p-2 border rounded-lg'}),
             'customer_pickup_time': forms.TimeInput(attrs={'type': 'time', 'class': 'w-full p-2 border rounded-lg'}),
             'customer_notes': forms.Textarea(attrs={'rows': 3, 'class': 'w-full p-2 border rounded-lg'}),
-            'customer_weight': forms.NumberInput(attrs={'class': 'w-full p-2 border rounded-lg'}),
             'customer_images': forms.ClearableFileInput(attrs={'class': 'w-full p-2 border rounded-lg'}),
         }
 
