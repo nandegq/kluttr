@@ -194,12 +194,14 @@ def household_schedule(request):
 
         if not customer.customer_plan:
             messages.error(
-                request, "Please select a plan before scheduling a pickup.")
+                request, "Please select a plan before scheduling a pickup."
+            )
             return redirect('household:household_plan')
 
         today = date.today()
         current_month = date(today.year, today.month, 1)
 
+        # get or create the monthly pickup plan for this customer
         pickup_plan, created = CustomerPickupPlan.objects.get_or_create(
             household_customer=customer,
             household_month=current_month,
@@ -211,18 +213,19 @@ def household_schedule(request):
 
         if request.method == 'POST':
             form = CustomerSchedulingForm(
-                request.POST, request.FILES, customer_pickup_plan=pickup_plan
+                request.POST, request.FILES, pickup_plan=pickup_plan
             )
             if form.is_valid():
-                pickup = form.save()
+                pickup = form.save()  # customer_pickup_plan is assigned inside form
                 pickup_plan.household_pickups_done += 1
                 pickup_plan.save()
+
                 messages.success(request, "Pickup scheduled successfully!")
                 return redirect('household:household_success')
             else:
-                print(form.errors)
+                print(form.errors)  # debug validation errors
         else:
-            form = CustomerSchedulingForm(customer_pickup_plan=pickup_plan)
+            form = CustomerSchedulingForm(pickup_plan=pickup_plan)
 
         return render(request, 'household_onboard_schedule.html', {
             'form': form,
@@ -231,6 +234,7 @@ def household_schedule(request):
         })
 
     except Exception as e:
+        import traceback
         traceback.print_exc()
         return HttpResponse(f"Error: {e}")
 
