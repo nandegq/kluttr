@@ -51,7 +51,7 @@ class CustomerPickups(models.Model):
         upload_to='pickup_images/', null=True, blank=True)
     # weight in kg
     waste_size = models.CharField(
-        null=True, blank=False, choices=WASTE_SIZES, max_length=300)
+        null=True, blank=True, choices=WASTE_SIZES, max_length=300)
     customer_collected_by = models.CharField(
         max_length=250,  null=True, blank=True)
 
