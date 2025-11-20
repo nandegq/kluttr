@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomerPickups
+from .models import CustomerPickups, CustomerPickupPlan
 
 
 class CustomerSchedulingForm(forms.ModelForm):
@@ -19,31 +19,23 @@ class CustomerSchedulingForm(forms.ModelForm):
             'customer_images': forms.ClearableFileInput(attrs={'class': 'w-full p-2 border rounded-lg'}),
         }
 
-    def __init__(self, *args, customer_plan=None, **kwargs):
+    def __init__(self, *args, customer_pickup_plan=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.customer_plan = customer_plan  # CustomerPickupPlan object
+        self.customer_pickup_plan = customer_pickup_plan  # CustomerPickupPlan object
 
     def save(self, commit=True):
         pickup = super().save(commit=False)
-
-        # attach subscription plan (CustomerPlans)
-        if self.customer_plan:
-            pickup.customer_pickup_plan = self.customer_plan.household_plan
-
+        if self.customer_pickup_plan:
+            pickup.customer_pickup_plan = self.customer_pickup_plan.household_plan
         if commit:
             pickup.save()
         return pickup
 
     def clean_customer_scheduled_date(self):
         scheduled_date = self.cleaned_data.get('customer_scheduled_date')
-
-        if (
-            self.customer_plan and
-            self.customer_plan.household_pickups_done >=
-            self.customer_plan.household_plan.customer_pickups_per_month
-        ):
-            raise forms.ValidationError(
-                "You have already scheduled all your pickups for this month."
-            )
-
+        if self.customer_pickup_plan:
+            if self.customer_pickup_plan.household_pickups_done >= self.customer_pickup_plan.household_plan.customer_pickups_per_month:
+                raise forms.ValidationError(
+                    "You have already scheduled all your pickups for this month."
+                )
         return scheduled_date
