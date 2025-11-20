@@ -33,9 +33,9 @@ class CustomerPickups(models.Model):
     PICKUP_STATUS = [('completed', 'Completed'),
                      ('pending', 'Pending'),
                      ('cancelled', 'Cancelled')]
-    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag'),
-                   ('medium', 'Medium/Standard/Equivalent to bin bag'),
-                   ('large', 'Large/Bulky items/'),]
+    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag (R99)'),
+                   ('medium', 'Medium/Standard/Equivalent to bin bag (R149)'),
+                   ('large', 'Large/Bulky items (R399)'),]
     customer_pickup_plan = models.ForeignKey(
         CustomerPlans, on_delete=models.CASCADE)
     customer_scheduled_date = models.DateField()
@@ -50,7 +50,7 @@ class CustomerPickups(models.Model):
     customer_images = models.ImageField(
         upload_to='pickup_images/', null=True, blank=True)
     # weight in kg
-    customer_waste_size = models.CharField(max_length=300, null=True, null=False, choices=WASTE_SIZES)
+    waste_size = models.CharField(null=True, null=False, choices=WASTE_SIZES, max_length=300)
     customer_collected_by = models.CharField(
         max_length=250,  null=True, blank=True)
 

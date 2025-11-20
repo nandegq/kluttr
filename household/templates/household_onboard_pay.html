@@ -5,8 +5,25 @@
 {% block content %}
 <div class="max-w-md mx-auto mt-12 bg-white shadow-lg rounded-xl p-8">
     <h2 class="text-2xl font-semibold mb-6 text-center">Proceed to Payment</h2>
+
     <form method="post">
         {% csrf_token %}
+
+        {% if plan.plan_name|lower == "on-demand" %}
+        <p class="mb-4 font-medium">Select Waste Size:</p>
+        <div class="flex flex-col gap-2">
+            <label>
+                <input type="radio" name="waste_size" value="small" checked> Small (R99)
+            </label>
+            <label>
+                <input type="radio" name="waste_size" value="medium"> Medium (R149)
+            </label>
+            <label>
+                <input type="radio" name="waste_size" value="large"> Large (R299)
+            </label>
+        </div>
+        {% endif %}
+
         <button type="submit"
             class="w-full bg-purple-500 text-white font-medium py-2 rounded-lg hover:bg-purple-600 transition-colors mt-4">
             Pay Now

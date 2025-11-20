@@ -83,33 +83,51 @@ def household_payment_info(request):
             customer.save()
         except CustomerPlans.DoesNotExist:
             messages.error(request, "Selected plan does not exist.")
-            return redirect('household_plan')
+            return redirect('household:household_plan')
 
     if not plan:
         messages.error(request, "Please select a plan first.")
-        return redirect('household_plan')
+        return redirect('household:household_plan')
 
     if request.method == 'POST':
+        price = 0
+        waste_size = None
 
-        # ⭐ SAFE PRICE HANDLING
-        try:
-            price = float(plan.plan_price or 0)
-        except:
-            price = 0
+        # On-demand plan pricing
+        if plan.plan_name.lower() == 'on-demand':
+            waste_size = request.POST.get('waste_size')
+            if not waste_size:
+                messages.error(request, "Please select a waste size.")
+                return redirect('household:household_payment_info')
 
-    # ⭐ FREE PLAN HANDLER
+            waste_size = waste_size.lower()
+            if waste_size == 'small':
+                price = 99
+            elif waste_size == 'medium':
+                price = 149
+            elif waste_size == 'large':
+                price = 399
+            else:
+                messages.error(request, "Invalid waste size selected.")
+                return redirect('household:household_payment_info')
+        else:
+            # Non-on-demand plans use plan price
+            try:
+                price = float(plan.plan_price or 0)
+            except:
+                price = 0
+
+        # FREE PLAN HANDLER
         if price == 0:
             messages.success(request, "Free plan activated successfully.")
-            return redirect('household_schedule')
+            return redirect('household:household_schedule')
 
-    # -------------------------------
-    # PAYFAST PAYMENT DATA
-    # -------------------------------
+        # PAYFAST PAYMENT DATA
         data = {
             "merchant_id": settings.PAYFAST_MERCHANT_ID,
             "merchant_key": settings.PAYFAST_MERCHANT_KEY,
             "amount": str(price),
-            "item_name": plan.plan_name,
+            "item_name": f"{plan.plan_name}" + (f" ({waste_size})" if waste_size else ""),
             "return_url": request.build_absolute_uri(reverse('household:household_schedule')),
             "cancel_url": request.build_absolute_uri(reverse('household:household_plan')),
             "notify_url": 'http://127.0.0.1:8000/payfast-ipn/',
@@ -117,29 +135,26 @@ def household_payment_info(request):
             "custom_str2": plan.plan_name,
         }
 
-        # -------------------------------
         # SUBSCRIPTION LOGIC
-        # -------------------------------
         if plan.plan_name.lower() != "on-demand":
             data.update({
                 "subscription_type": 1,
                 "recurring_amount": str(plan.plan_price),
-                "frequency": 3,    # monthly
+                "frequency": 3,
                 "cycles": 0,
                 "billing_date": date.today().isoformat(),
             })
 
-        # -------------------------------
-        # SIGNATURE (CRITICAL)
-        # -------------------------------
-
-        # Redirect
+        # Redirect to PayFast
         payfast_url = "https://sandbox.payfast.co.za/eng/process?" + \
             urlencode(data)
-
         return redirect(payfast_url)
 
-    return render(request, 'household_onboard_pay.html')
+    # Render payment page
+    return render(request, 'household_onboard_pay.html', {
+        'plan': plan,
+        'on_demand': plan.plan_name.lower() == 'on-demand'
+    })
 
 
 # 📩 4️⃣ PayFast IPN Listener
@@ -172,7 +187,6 @@ def send_confirmation_email_html(user_email, plan_name):
     email.send()
 
 
-# 🚛 6️⃣ Schedule Pickup
 @login_required
 def household_schedule(request):
     try:
@@ -195,21 +209,36 @@ def household_schedule(request):
             }
         )
 
+        # Always use the actual plan object
+        plan = pickup_plan.household_plan
+
         if request.method == 'POST':
             form = CustomerSchedulingForm(
-                request.POST, request.FILES, customer_plan=pickup_plan)
+                request.POST, request.FILES, customer_plan=plan)
+
             if form.is_valid():
                 pickup = form.save(commit=False)
-                pickup.customer_pickup_plan = pickup_plan.household_plan
+
+                if not pickup_plan.household_plan:
+                    pickup_plan.household_plan = customer.customer_plan
+                    pickup_plan.save()
+
+                # FIX: point to the pickup_plan model, not the plan inside it
+                pickup.customer_pickup_plan = pickup_plan
+                pickup.save()
+
                 pickup_plan.household_pickups_done += 1
                 pickup_plan.save()
+
                 messages.success(request, "Pickup scheduled successfully!")
                 return redirect('household:household_success')
+
             else:
-                print(form.errors)  # 👈 prints validation errors
+                print(form.errors)
 
         else:
-            form = CustomerSchedulingForm(customer_plan=pickup_plan)
+            # GET method must also pass the plan, not the pickup_plan model
+            form = CustomerSchedulingForm(customer_plan=plan)
 
         return render(request, 'household_onboard_schedule.html', {
             'form': form,
