@@ -13,33 +13,37 @@ class CustomerSchedulingForm(forms.ModelForm):
             'customer_images'
         ]
         widgets = {
-            'customer_scheduled_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full p-2 border rounded-lg'}),
-            'customer_pickup_time': forms.TimeInput(attrs={'type': 'time', 'class': 'w-full p-2 border rounded-lg'}),
-            'customer_notes': forms.Textarea(attrs={'rows': 3, 'class': 'w-full p-2 border rounded-lg'}),
-            'customer_images': forms.ClearableFileInput(attrs={'class': 'w-full p-2 border rounded-lg'}),
+            'customer_scheduled_date': forms.DateInput(
+                attrs={'type': 'date', 'class': 'w-full p-2 border rounded-lg'}
+            ),
+            'customer_pickup_time': forms.TimeInput(
+                attrs={'type': 'time', 'class': 'w-full p-2 border rounded-lg'}
+            ),
+            'customer_notes': forms.Textarea(
+                attrs={'rows': 3, 'class': 'w-full p-2 border rounded-lg'}
+            ),
+            'customer_images': forms.ClearableFileInput(
+                attrs={'class': 'w-full p-2 border rounded-lg'}
+            ),
         }
 
-    def __init__(self, *args, customer_pickup_plan=None, **kwargs):
+    def __init__(self, *args, pickup_plan=None, **kwargs):
         super().__init__(*args, **kwargs)
-        # Must be CustomerPickupPlan instance
-        self.customer_pickup_plan = customer_pickup_plan
-
-    def save(self, commit=True):
-        pickup = super().save(commit=False)
-        if self.customer_pickup_plan:
-            pickup.customer_pickup_plan = self.customer_pickup_plan
-        if commit:
-            pickup.save()
-        return pickup
+        self.pickup_plan = pickup_plan  # CustomerPickupPlan instance
 
     def clean_customer_scheduled_date(self):
         scheduled_date = self.cleaned_data.get('customer_scheduled_date')
-        if (
-            self.customer_pickup_plan and
-            self.customer_pickup_plan.household_pickups_done >=
-            self.customer_pickup_plan.household_plan.customer_pickups_per_month
-        ):
+        if self.pickup_plan and self.pickup_plan.household_pickups_done >= self.pickup_plan.household_plan.customer_pickups_per_month:
             raise forms.ValidationError(
                 "You have already scheduled all your pickups for this month."
             )
         return scheduled_date
+
+    def save(self, commit=True):
+        pickup = super().save(commit=False)
+        if self.pickup_plan:
+            # assign the correct CustomerPlans instance
+            pickup.customer_pickup_plan = self.pickup_plan.household_plan
+        if commit:
+            pickup.save()
+        return pickup
