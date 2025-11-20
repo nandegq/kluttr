@@ -21,21 +21,31 @@ class CustomerSchedulingForm(forms.ModelForm):
 
     def __init__(self, *args, customer_pickup_plan=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.customer_pickup_plan = customer_pickup_plan  # CustomerPickupPlan object
+        # ✅ This is the CustomerPickupPlan instance
+        self.customer_pickup_plan = customer_pickup_plan
 
     def save(self, commit=True):
         pickup = super().save(commit=False)
+
+        # attach subscription plan (CustomerPlans)
         if self.customer_pickup_plan:
             pickup.customer_pickup_plan = self.customer_pickup_plan.household_plan
+
         if commit:
             pickup.save()
         return pickup
 
     def clean_customer_scheduled_date(self):
         scheduled_date = self.cleaned_data.get('customer_scheduled_date')
-        if self.customer_pickup_plan:
-            if self.customer_pickup_plan.household_pickups_done >= self.customer_pickup_plan.household_plan.customer_pickups_per_month:
-                raise forms.ValidationError(
-                    "You have already scheduled all your pickups for this month."
-                )
+
+        # check if user exceeded allowed pickups for the month
+        if (
+            self.customer_pickup_plan and
+            self.customer_pickup_plan.household_pickups_done >=
+            self.customer_pickup_plan.household_plan.customer_pickups_per_month
+        ):
+            raise forms.ValidationError(
+                "You have already scheduled all your pickups for this month."
+            )
+
         return scheduled_date
