@@ -6,7 +6,7 @@ class CustomerSchedulingForm(forms.ModelForm):
     class Meta:
         model = CustomerPickups
         fields = ['customer_scheduled_date', 'customer_pickup_time',
-                  'customer_waste_type', 'customer_notes', 'waste_size', 'customer_images']
+                  'customer_waste_type', 'customer_notes', 'customer_images']
         widgets = {
             'customer_scheduled_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full p-2 border rounded-lg'}),
             'customer_pickup_time': forms.TimeInput(attrs={'type': 'time', 'class': 'w-full p-2 border rounded-lg'}),
@@ -26,9 +26,10 @@ class CustomerSchedulingForm(forms.ModelForm):
     def save(self, commit=True):
         pickup = super().save(commit=False)
         if self.customer_plan:
-            pickup.customer_pickup_plan = self.customer_plan  # ✅ use correct attribute
-            size = self.customer.cleaned_data.get('waste_size')
-            pickup.price = self.PRICE_MAP.get(size, 0)
+            # ✅ use correct attribute
+            pickup.customer_pickup_plan = self.customer_plan.household_plan
+            size = self.cleaned_data.get('waste_size')
+
         if commit:
             pickup.save()
         return pickup
