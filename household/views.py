@@ -209,36 +209,20 @@ def household_schedule(request):
             }
         )
 
-        # Always use the actual plan object
-        plan = pickup_plan.household_plan
-
         if request.method == 'POST':
             form = CustomerSchedulingForm(
-                request.POST, request.FILES, customer_plan=plan)
-
+                request.POST, request.FILES, customer_pickup_plan=pickup_plan
+            )
             if form.is_valid():
-                pickup = form.save(commit=False)
-
-                if not pickup_plan.household_plan:
-                    pickup_plan.household_plan = customer.customer_plan
-                    pickup_plan.save()
-
-                # FIX: point to the pickup_plan model, not the plan inside it
-                pickup.customer_pickup_plan = pickup_plan
-                pickup.save()
-
+                pickup = form.save()
                 pickup_plan.household_pickups_done += 1
                 pickup_plan.save()
-
                 messages.success(request, "Pickup scheduled successfully!")
                 return redirect('household:household_success')
-
             else:
                 print(form.errors)
-
         else:
-            # GET method must also pass the plan, not the pickup_plan model
-            form = CustomerSchedulingForm(customer_plan=plan)
+            form = CustomerSchedulingForm(customer_pickup_plan=pickup_plan)
 
         return render(request, 'household_onboard_schedule.html', {
             'form': form,
