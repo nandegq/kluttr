@@ -49,7 +49,7 @@ def household_plan(request):
             customer = request.user.customer
             customer.customer_plan = selected_plan
             customer.save()
-            return redirect('household_payment_info')
+            return redirect('household:household_payment_info')
 
     return render(request, 'household_onboard_plan.html', {'plans': plans})
 
@@ -100,6 +100,7 @@ def household_payment_info(request):
     except Exception as e:
         logger.exception("Error in household_payment_info")
         messages.error(request, "There was an error loading the payment page.")
+
         return redirect('household:household_plan')
 
 
