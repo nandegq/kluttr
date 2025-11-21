@@ -96,16 +96,17 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    client = request.user.client
-    plan = client.selected_plan
+    client = request.user.customer  # match your Customer model
+    plan = client.customer_plan     # matches the field name in Customer
 
     if not plan:
+        # send user to select a plan
         return redirect('household:household_plan')
 
-    plan_name_lower = plan.plan_name.lower()
+    plan_name_lower = plan.plan_name.lower() if plan.plan_name else ""
 
     if request.method == 'POST':
-        # ON-DEMAND
+        # ON-DEMAND (once-off)
         if plan_name_lower == 'on-demand':
             waste_size = request.POST.get('waste_size')
             if not waste_size:
@@ -114,21 +115,24 @@ def household_payment_info(request):
                     'error': "Please select a waste size."
                 })
 
+            # Map waste size to price
             price_map = {'small': 499, 'medium': 799, 'large': 1999}
             amount = price_map.get(waste_size)
 
-            client.on_demand_waste_size = waste_size
+            # Save waste size for this client (you could use CustomerPickup or a field on Customer)
+            client.customer_material_type = waste_size
             client.save()
 
+            # PayFast once-off URL
             payfast_url = (
                 f"https://sandbox.payfast.co.za/eng/process?"
                 f"amount={amount}&item_name=On-Demand+Waste+Removal&custom_int1={client.id}"
             )
             return redirect(payfast_url)
 
-        # SUBSCRIPTIONS
+        # SUBSCRIPTIONS (eco / eco pro)
         elif plan_name_lower in ['eco', 'eco pro']:
-            amount = plan.price
+            amount = plan.plan_price
             plan_name_url = plan.plan_name.replace(" ", "+")
             payfast_url = (
                 f"https://sandbox.payfast.co.za/eng/process?"
@@ -142,7 +146,7 @@ def household_payment_info(request):
                 'error': "Unknown plan type."
             })
 
-    # GET → show payment page
+    # GET → render payment page
     return render(request, 'household_onboard_pay.html', {'plan': plan})
 
 
