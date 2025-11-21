@@ -96,7 +96,7 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    client = request.user.customer  # match your Customer model
+    client = request.user.customer  # matches your Customer model
     plan = client.customer_plan     # matches the field name in Customer
 
     if not plan:
@@ -115,18 +115,20 @@ def household_payment_info(request):
                     'error': "Please select a waste size."
                 })
 
-            # Map waste size to price
             price_map = {'small': 499, 'medium': 799, 'large': 1999}
             amount = price_map.get(waste_size)
 
-            # Save waste size for this client (you could use CustomerPickup or a field on Customer)
             client.customer_material_type = waste_size
             client.save()
 
-            # PayFast once-off URL
+            # PayFast URL with merchant ID & key
             payfast_url = (
                 f"https://sandbox.payfast.co.za/eng/process?"
-                f"amount={amount}&item_name=On-Demand+Waste+Removal&custom_int1={client.id}"
+                f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
+                f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
+                f"amount={amount}&"
+                f"item_name=On-Demand+Waste+Removal&"
+                f"custom_int1={client.id}"
             )
             return redirect(payfast_url)
 
@@ -136,7 +138,11 @@ def household_payment_info(request):
             plan_name_url = plan.plan_name.replace(" ", "+")
             payfast_url = (
                 f"https://sandbox.payfast.co.za/eng/process?"
-                f"subscription_type=1&item_name={plan_name_url}&amount={amount}&frequency=30&cycles=0&custom_int1={client.id}"
+                f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
+                f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
+                f"subscription_type=1&"
+                f"item_name={plan_name_url}&"
+                f"amount={amount}&frequency=30&cycles=0&custom_int1={client.id}"
             )
             return redirect(payfast_url)
 
