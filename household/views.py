@@ -96,35 +96,34 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    try:
-        customer = getattr(request.user, 'customer', None)
-        if not customer:
-            logger.error(f"No customer profile for user {request.user}")
-            return HttpResponse("No customer profile found", status=400)
+    customer = getattr(request.user, 'customer', None)
+    if not customer:
+        return HttpResponse("No customer profile found", status=400)
 
+    # Prefer GET plan id, fallback to customer plan
+    plan_id = request.GET.get('plan')
+    if plan_id:
+        try:
+            plan = CustomerPlans.objects.get(id=plan_id)
+            # Update customer's plan
+            customer.customer_plan = plan
+            customer.save()
+        except CustomerPlans.DoesNotExist:
+            messages.error(request, "Selected plan does not exist.")
+            return redirect('household:household_plan')
+    else:
         plan = customer.customer_plan
-        plan_id = request.GET.get('plan')
-
-        if plan_id:
-            try:
-                plan = CustomerPlans.objects.get(id=plan_id)
-                customer.customer_plan = plan
-                customer.save()
-            except CustomerPlans.DoesNotExist:
-                messages.error(request, "Selected plan does not exist.")
-                return redirect('household:household_plan')
-
         if not plan:
             messages.error(request, "Please select a plan first.")
             return redirect('household:household_plan')
 
-        # rest of your logic...
+    # Now plan is guaranteed to exist
+    on_demand = plan.plan_name.lower() == "on-demand"
 
-    except Exception as e:
-        logger.exception("Error in household_payment_info")
-        messages.error(request, "There was an error loading the payment page.")
-
-        return redirect('household:household_plan')
+    return render(request, 'household_onboard_pay.html', {
+        'plan': plan,
+        'on_demand': on_demand
+    })
 
 
 # 📩 4️⃣ PayFast IPN Listener
