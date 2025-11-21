@@ -1,7 +1,7 @@
 
 # Create your views here.
 import logging
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 import hashlib
 from django.urls import reverse
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
+
 # make sure this form exists
 from household.household_form import CustomerSchedulingForm
 import traceback
@@ -36,20 +37,42 @@ def household_onboarding(request):
     return render(request, 'household_dashboard.html')
 
 
-# 💡 2️⃣ Plan Selection
+logger = logging.getLogger(__name__)
+
+
 @login_required
 def household_plan(request):
+    # Get all plans
     plans = CustomerPlans.objects.all()
-    if request.method == 'POST':
-        plan_id = request.POST.get('plan')
-        if plan_id:
-            selected_plan = CustomerPlans.objects.get(id=plan_id)
 
-        # Ensure the user has a customer profile
-            customer = request.user.customer
-            customer.customer_plan = selected_plan
-            customer.save()
-            return redirect('household:household_payment_info')
+    try:
+        # Ensure user has a customer profile
+        customer = getattr(request.user, 'customer', None)
+        if not customer:
+            logger.error(f"No customer profile for user {request.user}")
+            messages.error(request, "No customer profile found.")
+            return redirect('landing')  # or wherever makes sense
+
+        if request.method == 'POST':
+            plan_id = request.POST.get('plan')
+            if plan_id:
+                selected_plan = get_object_or_404(CustomerPlans, id=plan_id)
+
+                # Assign selected plan to customer
+                customer.customer_plan = selected_plan
+                customer.save()
+
+                # Redirect to payment page with plan_id in URL
+                payment_url = f"{reverse('household:household_payment_info')}?plan={selected_plan.id}"
+                return redirect(payment_url)
+            else:
+                messages.error(request, "Please select a plan.")
+                return redirect('household:household_plan')
+
+    except Exception as e:
+        logger.exception("Error in household_plan view")
+        messages.error(request, "There was an error loading the plan page.")
+        return redirect('landing')  # fallback page
 
     return render(request, 'household_onboard_plan.html', {'plans': plans})
 
