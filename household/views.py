@@ -1,5 +1,6 @@
 
 # Create your views here.
+import logging
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -16,11 +17,11 @@ import requests
 from django.contrib.auth.models import User
 import hashlib
 from django.urls import reverse
-
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
 # make sure this form exists
 from household.household_form import CustomerSchedulingForm
 import traceback
+logger = logging.getLogger(__name__)
 
 
 # 🏠 1️⃣ Onboarding View
@@ -72,89 +73,34 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    customer = request.user.customer
-    plan = customer.customer_plan
-    plan_id = request.GET.get('plan')
+    try:
+        customer = getattr(request.user, 'customer', None)
+        if not customer:
+            logger.error(f"No customer profile for user {request.user}")
+            return HttpResponse("No customer profile found", status=400)
 
-    if plan_id:
-        try:
-            plan = CustomerPlans.objects.get(id=plan_id)
-            customer.customer_plan = plan
-            customer.save()
-        except CustomerPlans.DoesNotExist:
-            messages.error(request, "Selected plan does not exist.")
+        plan = customer.customer_plan
+        plan_id = request.GET.get('plan')
+
+        if plan_id:
+            try:
+                plan = CustomerPlans.objects.get(id=plan_id)
+                customer.customer_plan = plan
+                customer.save()
+            except CustomerPlans.DoesNotExist:
+                messages.error(request, "Selected plan does not exist.")
+                return redirect('household:household_plan')
+
+        if not plan:
+            messages.error(request, "Please select a plan first.")
             return redirect('household:household_plan')
 
-    if not plan:
-        messages.error(request, "Please select a plan first.")
+        # rest of your logic...
+
+    except Exception as e:
+        logger.exception("Error in household_payment_info")
+        messages.error(request, "There was an error loading the payment page.")
         return redirect('household:household_plan')
-
-    if request.method == 'POST':
-        price = 0
-        waste_size = None
-
-        # On-demand plan pricing
-        if plan.plan_name.lower() == 'on-demand':
-            waste_size = request.POST.get('waste_size')
-            if not waste_size:
-                messages.error(request, "Please select a waste size.")
-                return redirect('household:household_payment_info')
-
-            waste_size = waste_size.lower()
-            if waste_size == 'small':
-                price = 99
-            elif waste_size == 'medium':
-                price = 149
-            elif waste_size == 'large':
-                price = 399
-            else:
-                messages.error(request, "Invalid waste size selected.")
-                return redirect('household:household_payment_info')
-        else:
-            # Non-on-demand plans use plan price
-            try:
-                price = float(plan.plan_price or 0)
-            except:
-                price = 0
-
-        # FREE PLAN HANDLER
-        if price == 0:
-            messages.success(request, "Free plan activated successfully.")
-            return redirect('household:household_schedule')
-
-        # PAYFAST PAYMENT DATA
-        data = {
-            "merchant_id": settings.PAYFAST_MERCHANT_ID,
-            "merchant_key": settings.PAYFAST_MERCHANT_KEY,
-            "amount": str(price),
-            "item_name": f"{plan.plan_name}" + (f" ({waste_size})" if waste_size else ""),
-            "return_url": request.build_absolute_uri(reverse('household:household_schedule')),
-            "cancel_url": request.build_absolute_uri(reverse('household:household_plan')),
-            "notify_url": request.build_absolute_uri(reverse('household:payfast_ipn')),
-            "custom_str1": request.user.email,
-            "custom_str2": plan.plan_name,
-        }
-
-        # SUBSCRIPTION LOGIC
-        if plan.plan_name.lower() != "on-demand":
-            data.update({
-                "subscription_type": 1,
-                "recurring_amount": str(plan.plan_price),
-                "frequency": 3,
-                "cycles": 0,
-                "billing_date": date.today().isoformat(),
-            })
-
-        # Redirect to PayFast
-        payfast_url = "https://sandbox.payfast.co.za/eng/process?" + \
-            urlencode(data)
-        return redirect(payfast_url)
-
-    # Render payment page
-    return render(request, 'household_onboard_pay.html', {
-        'plan': plan,
-        'on_demand': plan.plan_name.lower() == 'on-demand'
-    })
 
 
 # 📩 4️⃣ PayFast IPN Listener
