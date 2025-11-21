@@ -100,7 +100,7 @@ def household_payment_info(request):
     plan = client.selected_plan
 
     if not plan:
-        return redirect('select_plan')
+        return redirect('household:household_plan')
 
     plan_name = plan.plan_name.lower()
 
@@ -112,7 +112,7 @@ def household_payment_info(request):
             waste_size = request.POST.get("waste_size")
 
             if not waste_size:
-                return render(request, "payment_info.html", {
+                return render(request, "household_onboard_pay.html", {
                     "plan": plan,
                     "error": "Please select a waste size."
                 })
@@ -152,7 +152,7 @@ def household_payment_info(request):
             return redirect(payfast_url)
 
     # GET → show template
-    return render(request, "payment_info.html", {"plan": plan})
+    return render(request, "household_onboard_pay.html", {"plan": plan})
 
 
 # 📩 4️⃣ PayFast IPN Listener
