@@ -112,7 +112,7 @@ def household_payment_info(request):
             waste_size = request.POST.get('waste_size')
 
             if not waste_size:
-                return render(request, 'payment_info.html', {
+                return render(request, 'household_onboard_pay.html', {
                     'plan': plan,
                     'error': "Please select a waste size."
                 })
