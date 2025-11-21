@@ -108,7 +108,7 @@ def household_payment_info(request):
     if request.method == 'POST':
         # Define PayFast URLs
         return_url = request.build_absolute_uri(
-            reverse('household:household_success'))
+            reverse('household:household_schedule'))
         cancel_url = request.build_absolute_uri(
             reverse('household:household_payment_info'))
         notify_url = request.build_absolute_uri(
