@@ -130,7 +130,7 @@ def household_payment_info(request):
             "item_name": f"{plan.plan_name}" + (f" ({waste_size})" if waste_size else ""),
             "return_url": request.build_absolute_uri(reverse('household:household_schedule')),
             "cancel_url": request.build_absolute_uri(reverse('household:household_plan')),
-            "notify_url": 'http://127.0.0.1:8000/payfast-ipn/',
+            "notify_url": request.build_absolute_uri(reverse('household:payfast_ipn')),
             "custom_str1": request.user.email,
             "custom_str2": plan.plan_name,
         }
