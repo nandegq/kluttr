@@ -96,62 +96,76 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    customer = getattr(request.user, 'customer', None)
-    if not customer:
-        messages.error(request, "No customer profile found.")
-        return redirect("household:household_plan")
-
-    plan = customer.customer_plan
-
-    # GET request: update selected plan
-    plan_id = request.GET.get("plan")
-    if plan_id:
-        try:
-            plan = CustomerPlans.objects.get(id=plan_id)
-            customer.customer_plan = plan
-            customer.save()
-        except CustomerPlans.DoesNotExist:
-            messages.error(request, "Selected plan does not exist.")
-            return redirect("household:household_plan")
+    client = request.user.client
+    plan = client.selected_plan
 
     if not plan:
-        messages.error(request, "Please select a plan first.")
-        return redirect("household:household_plan")
+        return redirect('select_plan')
 
-    # POST request: handle payment
-    if request.method == "POST":
+    plan_name_lower = plan.plan_name.lower()
 
-        price = 0
-        waste_size = None
+    # Handle POST (user clicked "Pay Now")
+    if request.method == 'POST':
 
-        # On-demand logic
-        if plan.plan_name.lower() == "on-demand":
-            waste_size = request.POST.get("waste_size")
+        # 1️⃣ — ON-DEMAND (once-off)
+        if plan_name_lower == 'on-demand':
+            waste_size = request.POST.get('waste_size')
+
             if not waste_size:
-                messages.error(request, "Please select a waste size.")
-                return redirect("household:household_payment_info")
+                return render(request, 'payment_info.html', {
+                    'plan': plan,
+                    'error': "Please select a waste size."
+                })
 
-            waste_size = waste_size.lower()
-            price_map = {"small": 499, "medium": 799, "large": 1999}
+            # Once-off pricing
+            price_map = {
+                'small': 499,
+                'medium': 799,
+                'large': 1999,
+            }
 
-            if waste_size not in price_map:
-                messages.error(request, "Invalid waste size selected.")
-                return redirect("household:household_payment_info")
+            amount = price_map.get(waste_size)
 
-            price = price_map[waste_size]
+            # Save selected waste size
+            client.on_demand_waste_size = waste_size
+            client.save()
+
+            # PayFast once-off link
+            payfast_url = (
+                "https://sandbox.payfast.co.za/eng/process?"
+                f"amount={amount}&"
+                "item_name=On-Demand+Waste+Removal&"
+                f"custom_int1={client.id}"
+            )
+
+            return redirect(payfast_url)
+
+        # 2️⃣ — SUBSCRIPTIONS: eco / eco pro
+        elif plan_name_lower in ['eco', 'eco pro']:
+            amount = plan.price
+            plan_name = plan.plan_name.replace(" ", "+")
+
+            payfast_url = (
+                "https://sandbox.payfast.co.za/eng/process?"
+                "subscription_type=1&"
+                f"item_name={plan_name}&"
+                f"amount={amount}&"
+                "frequency=30&"
+                "cycles=0&"
+                f"custom_int1={client.id}"
+            )
+
+            return redirect(payfast_url)
 
         else:
-            price = float(plan.plan_price or 0)
+            return render(request, 'payment_info.html', {
+                'plan': plan,
+                'error': "Unknown plan type."
+            })
 
-        if price == 0:
-            return redirect("household:household_schedule")
-
-        # build PayFast data ...
-        # same as before
-
-    return render(request, "household_onboard_pay.html", {
-        "plan": plan,
-        "on_demand": plan.plan_name.lower() == "on-demand"
+    # GET request → show page
+    return render(request, 'payment_info.html', {
+        'plan': plan
     })
 
 
