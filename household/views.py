@@ -98,31 +98,60 @@ def household_plan(request):
 def household_payment_info(request):
     customer = getattr(request.user, 'customer', None)
     if not customer:
-        return HttpResponse("No customer profile found", status=400)
+        messages.error(request, "No customer profile found.")
+        return redirect("household:household_plan")
 
-    # Prefer GET plan id, fallback to customer plan
-    plan_id = request.GET.get('plan')
+    plan = customer.customer_plan
+
+    # GET request: update selected plan
+    plan_id = request.GET.get("plan")
     if plan_id:
         try:
             plan = CustomerPlans.objects.get(id=plan_id)
-            # Update customer's plan
             customer.customer_plan = plan
             customer.save()
         except CustomerPlans.DoesNotExist:
             messages.error(request, "Selected plan does not exist.")
-            return redirect('household:household_plan')
-    else:
-        plan = customer.customer_plan
-        if not plan:
-            messages.error(request, "Please select a plan first.")
-            return redirect('household:household_plan')
+            return redirect("household:household_plan")
 
-    # Now plan is guaranteed to exist
-    on_demand = plan.plan_name.lower() == "on-demand"
+    if not plan:
+        messages.error(request, "Please select a plan first.")
+        return redirect("household:household_plan")
 
-    return render(request, 'household_onboard_pay.html', {
-        'plan': plan,
-        'on_demand': on_demand
+    # POST request: handle payment
+    if request.method == "POST":
+
+        price = 0
+        waste_size = None
+
+        # On-demand logic
+        if plan.plan_name.lower() == "on-demand":
+            waste_size = request.POST.get("waste_size")
+            if not waste_size:
+                messages.error(request, "Please select a waste size.")
+                return redirect("household:household_payment_info")
+
+            waste_size = waste_size.lower()
+            price_map = {"small": 499, "medium": 799, "large": 1999}
+
+            if waste_size not in price_map:
+                messages.error(request, "Invalid waste size selected.")
+                return redirect("household:household_payment_info")
+
+            price = price_map[waste_size]
+
+        else:
+            price = float(plan.plan_price or 0)
+
+        if price == 0:
+            return redirect("household:household_schedule")
+
+        # build PayFast data ...
+        # same as before
+
+    return render(request, "household_onboard_pay.html", {
+        "plan": plan,
+        "on_demand": plan.plan_name.lower() == "on-demand"
     })
 
 
