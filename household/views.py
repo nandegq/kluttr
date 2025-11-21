@@ -158,13 +158,13 @@ def household_payment_info(request):
             return redirect(payfast_url)
 
         else:
-            return render(request, 'payment_info.html', {
+            return render(request, 'household_onboard_pay.html', {
                 'plan': plan,
                 'error': "Unknown plan type."
             })
 
     # GET request → show page
-    return render(request, 'payment_info.html', {
+    return render(request, 'household_onboard_pay.html', {
         'plan': plan
     })
 
