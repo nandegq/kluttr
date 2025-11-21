@@ -106,6 +106,14 @@ def household_payment_info(request):
     plan_name_lower = plan.plan_name.lower() if plan.plan_name else ""
 
     if request.method == 'POST':
+        # Define PayFast URLs
+        return_url = request.build_absolute_uri(
+            reverse('household:household_success'))
+        cancel_url = request.build_absolute_uri(
+            reverse('household:household_payment_info'))
+        notify_url = request.build_absolute_uri(
+            reverse('household:household_payfast_ipn'))
+
         # ON-DEMAND (once-off)
         if plan_name_lower == 'on-demand':
             waste_size = request.POST.get('waste_size')
@@ -121,14 +129,16 @@ def household_payment_info(request):
             client.customer_material_type = waste_size
             client.save()
 
-            # PayFast URL with merchant ID & key
             payfast_url = (
                 f"https://sandbox.payfast.co.za/eng/process?"
                 f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"amount={amount}&"
                 f"item_name=On-Demand+Waste+Removal&"
-                f"custom_int1={client.id}"
+                f"custom_int1={client.id}&"
+                f"return_url={return_url}&"
+                f"cancel_url={cancel_url}&"
+                f"notify_url={notify_url}"
             )
             return redirect(payfast_url)
 
@@ -142,7 +152,10 @@ def household_payment_info(request):
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"subscription_type=1&"
                 f"item_name={plan_name_url}&"
-                f"amount={amount}&frequency=30&cycles=0&custom_int1={client.id}"
+                f"amount={amount}&frequency=30&cycles=0&custom_int1={client.id}&"
+                f"return_url={return_url}&"
+                f"cancel_url={cancel_url}&"
+                f"notify_url={notify_url}"
             )
             return redirect(payfast_url)
 
