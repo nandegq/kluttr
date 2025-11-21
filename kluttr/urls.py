@@ -19,11 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from clients import views as client_views
+from users import views as users_views
 
 
 urlpatterns = [
     path('', client_views.landing, name='landing'),
     path("admin/", admin.site.urls),
+    path('accounts/login/', users_views.login_view, name='login'),
     path('accounts/', include("django.contrib.auth.urls")),
     path('users/', include('users.urls')),
     path('clients/', include('clients.urls')),
