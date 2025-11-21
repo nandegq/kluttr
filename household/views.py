@@ -102,35 +102,29 @@ def household_payment_info(request):
     if not plan:
         return redirect('select_plan')
 
-    plan_name_lower = plan.plan_name.lower()
+    plan_name = plan.plan_name.lower()
 
-    # Handle POST (user clicked "Pay Now")
-    if request.method == 'POST':
+    # POST → user clicked Pay Now
+    if request.method == "POST":
 
-        # 1️⃣ — ON-DEMAND (once-off)
-        if plan_name_lower == 'on-demand':
-            waste_size = request.POST.get('waste_size')
+        # ON-DEMAND
+        if plan_name == "on-demand":
+            waste_size = request.POST.get("waste_size")
 
             if not waste_size:
-                return render(request, 'household_onboard_pay.html', {
-                    'plan': plan,
-                    'error': "Please select a waste size."
+                return render(request, "payment_info.html", {
+                    "plan": plan,
+                    "error": "Please select a waste size."
                 })
 
-            # Once-off pricing
             price_map = {
-                'small': 499,
-                'medium': 799,
-                'large': 1999,
+                "small": 499,
+                "medium": 799,
+                "large": 1999,
             }
 
-            amount = price_map.get(waste_size)
+            amount = price_map[waste_size]
 
-            # Save selected waste size
-            client.on_demand_waste_size = waste_size
-            client.save()
-
-            # PayFast once-off link
             payfast_url = (
                 "https://sandbox.payfast.co.za/eng/process?"
                 f"amount={amount}&"
@@ -140,15 +134,15 @@ def household_payment_info(request):
 
             return redirect(payfast_url)
 
-        # 2️⃣ — SUBSCRIPTIONS: eco / eco pro
-        elif plan_name_lower in ['eco', 'eco pro']:
+        # SUBSCRIPTIONS
+        else:
             amount = plan.price
-            plan_name = plan.plan_name.replace(" ", "+")
+            plan_name_clean = plan.plan_name.replace(" ", "+")
 
             payfast_url = (
                 "https://sandbox.payfast.co.za/eng/process?"
                 "subscription_type=1&"
-                f"item_name={plan_name}&"
+                f"item_name={plan_name_clean}&"
                 f"amount={amount}&"
                 "frequency=30&"
                 "cycles=0&"
@@ -157,16 +151,8 @@ def household_payment_info(request):
 
             return redirect(payfast_url)
 
-        else:
-            return render(request, 'household_onboard_pay.html', {
-                'plan': plan,
-                'error': "Unknown plan type."
-            })
-
-    # GET request → show page
-    return render(request, 'household_onboard_pay.html', {
-        'plan': plan
-    })
+    # GET → show template
+    return render(request, "payment_info.html", {"plan": plan})
 
 
 # 📩 4️⃣ PayFast IPN Listener
