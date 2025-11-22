@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 import hashlib
 from django.urls import reverse
 from .models import Customer, CustomerPlans, CustomerPickups, CustomerPickupPlan
+import urllib.parse
 
 # make sure this form exists
 from household.household_form import CustomerSchedulingForm
@@ -96,17 +97,16 @@ def household_plan(request):
 
 @login_required
 def household_payment_info(request):
-    client = request.user.customer  # matches your Customer model
-    plan = client.customer_plan     # matches the field name in Customer
+    client = request.user.customer
+    plan = client.customer_plan
 
     if not plan:
-        # send user to select a plan
         return redirect('household:household_plan')
 
     plan_name_lower = plan.plan_name.lower() if plan.plan_name else ""
 
     if request.method == 'POST':
-        # Define PayFast URLs
+        # URLs
         return_url = request.build_absolute_uri(
             reverse('household:household_schedule'))
         cancel_url = request.build_absolute_uri(
@@ -114,7 +114,11 @@ def household_payment_info(request):
         notify_url = request.build_absolute_uri(
             reverse('household:household_payfast_ipn'))
 
-        # ON-DEMAND (once-off)
+        # Email & plan name for IPN email logic
+        custom_str1 = client.customer_email or client.user.email
+        custom_str2 = plan.plan_name
+
+        # ON-DEMAND
         if plan_name_lower == 'on-demand':
             waste_size = request.POST.get('waste_size')
             if not waste_size:
@@ -130,11 +134,13 @@ def household_payment_info(request):
             client.save()
 
             payfast_url = (
-                f"https://sandbox.payfast.co.za/eng/process?"
+                f"https://www.payfast.co.za/eng/process?"
                 f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"amount={amount}&"
                 f"item_name=On-Demand+Waste+Removal&"
+                f"custom_str1={custom_str1}&"
+                f"custom_str2={custom_str2}&"
                 f"custom_int1={client.id}&"
                 f"return_url={return_url}&"
                 f"cancel_url={cancel_url}&"
@@ -142,47 +148,61 @@ def household_payment_info(request):
             )
             return redirect(payfast_url)
 
-        # SUBSCRIPTIONS (eco / eco pro)
+        # SUBSCRIPTIONS
         elif plan_name_lower in ['eco', 'eco pro']:
             amount = plan.plan_price
             plan_name_url = plan.plan_name.replace(" ", "+")
+
             payfast_url = (
-                f"https://sandbox.payfast.co.za/eng/process?"
+                f"https://www.payfast.co.za/eng/process?"
                 f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"subscription_type=1&"
                 f"item_name={plan_name_url}&"
-                f"amount={amount}&frequency=30&cycles=0&custom_int1={client.id}&"
+                f"amount={amount}&"
+                f"frequency=30&cycles=0&"
+                f"custom_str1={custom_str1}&"
+                f"custom_str2={custom_str2}&"
+                f"custom_int1={client.id}&"
                 f"return_url={return_url}&"
                 f"cancel_url={cancel_url}&"
                 f"notify_url={notify_url}"
             )
             return redirect(payfast_url)
 
-        else:
-            return render(request, 'household_onboard_pay.html', {
-                'plan': plan,
-                'error': "Unknown plan type."
-            })
+        return render(request, 'household_onboard_pay.html', {
+            'plan': plan,
+            'error': "Unknown plan type."
+        })
 
-    # GET → render payment page
     return render(request, 'household_onboard_pay.html', {'plan': plan})
 
 
-# 📩 4️⃣ PayFast IPN Listener
 @csrf_exempt
 def household_payfast_ipn(request):
     if request.method == 'POST':
+        # Raw data from PayFast
         data = request.POST.copy()
 
-        verify_url = "https://sandbox.payfast.co.za/eng/query/validate"  # FIXED
+        # Convert to proper encoded string
+        encoded_data = urllib.parse.urlencode(data)
 
-        verify_response = requests.post(verify_url, data=data)
+        # Verify with PayFast (LIVE)
+        verify_url = "https://www.payfast.co.za/eng/query/validate"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-        if verify_response.text == "VALID":
+        verify_response = requests.post(
+            verify_url,
+            data=encoded_data,
+            headers=headers
+        )
+
+        if verify_response.text.strip() == "VALID":
             user_email = data.get("custom_str1")
             plan_name = data.get("custom_str2")
+
             send_confirmation_email_html(user_email, plan_name)
+
             return HttpResponse("OK")
 
         return HttpResponse("INVALID", status=400)
