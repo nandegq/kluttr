@@ -23,13 +23,13 @@ class CustomerPickups(models.Model):
                    ('paper_cardboard', 'Paper & Cardboard'),
                    ('glass', 'Glass'),
                    ('metal', 'Metal'),
-                   ('organic', 'Organic / Food Waste'),
+                   ('organic/food/garden', 'Organic /Garden/ Food Waste'),
                    ('e_waste', 'E-Waste'),
-                   ('textiles', 'Textiles / Fabric'),
-                   ('hazardous', 'Hazardous Waste'),
+                   ('textiles/clothing', 'Textiles /Clothing /Fabric'),
                    ('medical', 'Medical Waste'),
                    ('construction', 'Construction / Rubble'),
-                   ('mixed', 'Mixed Waste'),]
+                   ('mixed', 'Mixed Waste'),
+                   ('furniture/appliances', 'Furniture / Appliances'),]
     PICKUP_STATUS = [('completed', 'Completed'),
                      ('pending', 'Pending'),
                      ('cancelled', 'Cancelled')]
