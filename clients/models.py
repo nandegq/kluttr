@@ -52,16 +52,19 @@ class Pickups(models.Model):
                      ('paper_cardboard', 'Paper & Cardboard'),
                      ('glass', 'Glass'),
                      ('metal', 'Metal'),
-                     ('organic', 'Organic / Food Waste'),
+                     ('organic/food/garden', 'Organic /Garden/ Food Waste'),
                      ('e_waste', 'E-Waste'),
-                     ('textiles', 'Textiles / Fabric'),
-                     ('hazardous', 'Hazardous Waste'),
+                     ('textiles/clothing', 'Textiles /Clothing /Fabric'),
                      ('medical', 'Medical Waste'),
                      ('construction', 'Construction / Rubble'),
-                     ('mixed', 'Mixed Waste'),]
+                     ('mixed', 'Mixed Waste'),
+                     ('furniture/appliances', 'Furniture / Appliances'),]
     PICKUP_STATUSES = [('completed', 'Completed'),
                        ('pending', 'Pending'),
                        ('cancelled', ' Cancelled')]
+    WASTE_SIZES = [('small', 'Small/Light/Equivalent to wheelie (R999)'),
+                   ('medium', 'Medium/Standard/Equivalent to half bakkie load (R1599)'),
+                   ('large', 'Large/Bulky items/Full bakkie size and beyond (R2999)'),]
     pickup_plan = models.ForeignKey(PickupPlan, on_delete=models.CASCADE)
     scheduled_date = models.DateField()
     pickup_time = models.TimeField(null=True, blank=True)
@@ -72,6 +75,8 @@ class Pickups(models.Model):
     waste_type = models.CharField(
         null=True, blank=True, choices=WASTE_CHOICES, max_length=100)
     # used later to pass to API for waste type recognition
+    waste_size = models.CharField(
+        null=True, blank=True, choices=WASTE_SIZES, max_length=300)
     images = models.ImageField(
         upload_to='pickup_images/', null=True, blank=True)
     weight = models.PositiveIntegerField(default=0)  # weight in kg

@@ -17,6 +17,7 @@ from django.dispatch import receiver
 from django import forms
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+import urllib.parse
 # Create your views here.
 
 
@@ -61,56 +62,117 @@ def select_plan(request):
 
 @login_required
 def payment_info(request):
-    user = request.user
-    client = user.client
-    plan = client.selected_plan
+    client = request.user.customer
+    plan = client.customer_plan
 
     if not plan:
         return redirect('clients:select_plan')
 
-    if request.method == 'POST':
-        data = {'merchant_id': settings.PAYFAST_MERCHANT_ID,
-                'merchant_key': settings.PAYFAST_MERCHANT_KEY,
-                'amount': str(plan.price),
-                'item_name': plan.name,
-                'return_url': request.build_absolute_uri(reverse('clients:schedule')),
-                'cancel_url': request.build_absolute_uri(reverse('clients:select_plan')),
-                'notify_url': 'http://127.0.0.1:8000/payfast-ipn/',
-                'custom_str1': request.user.email,
-                'custom_str2': plan.name,
-                # Subscription fields
-                'subscription_type': 1,           # 1 = subscription
-                'recurring_amount': str(plan.price),
-                'frequency': 3,                   # 3 = monthly
-                'cycles': 0,                      # 0 = indefinite
-                'billing_date': date.today().isoformat(),  # first billing date (today)
-                }
-        query_string = urlencode(data)
-        payfast_url = f'https://sandbox.payfast.co.za/eng/process?{query_string}'
-        return redirect(payfast_url)
+    plan_name_lower = plan.plan_name.lower() if plan.plan_name else ""
 
-    return render(request, 'client_onboard_pay.html')
+    if request.method == 'POST':
+        # URLs
+        return_url = request.build_absolute_uri(
+            reverse('clients:schedule'))
+        cancel_url = request.build_absolute_uri(
+            reverse('clients:payment_info'))
+        notify_url = request.build_absolute_uri(
+            reverse('clients:payfast_ipn'))
+
+        # Email & plan name for IPN email logic
+        custom_str1 = client.customer_email or client.user.email
+        custom_str2 = plan.plan_name
+
+        # ON-DEMAND
+        if plan_name_lower == 'on-demand':
+            waste_size = request.POST.get('waste_size')
+            if not waste_size:
+                return render(request, 'client_onboard_pay.html', {
+                    'plan': plan,
+                    'error': "Please select a waste size."
+                })
+
+            price_map = {'small': 999, 'medium': 1499, 'large': 2999}
+            amount = price_map.get(waste_size)
+
+            client.customer_material_type = waste_size
+            client.save()
+
+            payfast_url = (
+                f"https://www.payfast.co.za/eng/process?"
+                f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
+                f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
+                f"amount={amount}&"
+                f"item_name=On-Demand+Waste+Removal&"
+                f"custom_str1={custom_str1}&"
+                f"custom_str2={custom_str2}&"
+                f"custom_int1={client.id}&"
+                f"return_url={return_url}&"
+                f"cancel_url={cancel_url}&"
+                f"notify_url={notify_url}"
+            )
+            return redirect(payfast_url)
+
+        # SUBSCRIPTIONS
+        elif plan_name_lower in ['eco', 'eco pro']:
+            amount = plan.plan_price
+            plan_name_url = plan.plan_name.replace(" ", "+")
+
+            payfast_url = (
+                f"https://www.payfast.co.za/eng/process?"
+                f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
+                f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
+                f"subscription_type=1&"
+                f"item_name={plan_name_url}&"
+                f"amount={amount}&"
+                f"frequency=30&cycles=0&"
+                f"custom_str1={custom_str1}&"
+                f"custom_str2={custom_str2}&"
+                f"custom_int1={client.id}&"
+                f"return_url={return_url}&"
+                f"cancel_url={cancel_url}&"
+                f"notify_url={notify_url}"
+            )
+            return redirect(payfast_url)
+
+        return render(request, 'client_onboard_pay.html', {
+            'plan': plan,
+            'error': "Unknown plan type."
+        })
+
+    return render(request, 'client_onboard_pay.html', {'plan': plan})
 
 
 @csrf_exempt
 def payfast_ipn(request):
     if request.method == 'POST':
-        # Step 1: Grab the data PayFast sent
+        # Raw data from PayFast
         data = request.POST.copy()
 
-        # Step 2: Verify the payment with PayFast
-        verify_url = 'https://sandbox.payfast.co.za/eng/process'  # sandbox
-        verify_response = requests.post(verify_url, data=data)
-        if verify_response.text == 'VALID':
-            # Payment is verified
-            # You pass this in 'custom' field in payment
-            user_email = data.get('custom_str1')
-            plan_name = data.get('custom_str2')
+        # Convert to proper encoded string
+        encoded_data = urllib.parse.urlencode(data)
+
+        # Verify with PayFast (LIVE)
+        verify_url = "https://www.payfast.co.za/eng/query/validate"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        verify_response = requests.post(
+            verify_url,
+            data=encoded_data,
+            headers=headers
+        )
+
+        if verify_response.text.strip() == "VALID":
+            user_email = data.get("custom_str1")
+            plan_name = data.get("custom_str2")
+
             send_confirmation_email_html(user_email, plan_name)
-            return HttpResponse('OK')
-        else:
-            return HttpResponse('INVALID')
-    return HttpResponse('Method not allowed', status=405)
+
+            return HttpResponse("OK")
+
+        return HttpResponse("INVALID", status=400)
+
+    return HttpResponse("Method not allowed", status=405)
 
 
 def send_confirmation_email_html(user_email, plan_name):

@@ -7,6 +7,23 @@
     <h2 class="text-2xl font-semibold mb-6 text-center">Proceed to Payment</h2>
     <form method="post">
         {% csrf_token %}
+        {% if plan.plan_name|lower == "on-demand" %}
+        <p class="mb-4 font-medium">Select Waste Size:</p>
+        <div class="flex flex-col gap-2">
+            <label>
+                <input type="radio" name="waste_size" value="small" checked>Light load- more or less equivalent to a
+                wheelie bin (R999)
+            </label>
+            <label>
+                <input type="radio" name="waste_size" value="medium">Standard load- Equivalent to half a bakkie load
+                (R1499)
+            </label>
+            <label>
+                <input type="radio" name="waste_size" value="large">Large Bulky items - Full bakkie-load and upwards
+                (R2999)
+            </label>
+        </div>
+        {% endif %}
         <button type="submit"
             class="w-full bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition-colors mt-4">
             Pay Now
