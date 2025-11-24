@@ -62,29 +62,27 @@ def select_plan(request):
 
 @login_required
 def payment_info(request):
-    client = request.user.customer
-    plan = client.customer_plan
+    client = request.user.client
+    plan = client.selected_plan   # FIXED
 
     if not plan:
         return redirect('clients:select_plan')
 
-    plan_name_lower = plan.plan_name.lower() if plan.plan_name else ""
+    name_lower = (plan.name or "").lower()
 
     if request.method == 'POST':
-        # URLs
-        return_url = request.build_absolute_uri(
-            reverse('clients:schedule'))
+        # Build URLs
+        return_url = request.build_absolute_uri(reverse('clients:schedule'))
         cancel_url = request.build_absolute_uri(
             reverse('clients:payment_info'))
-        notify_url = request.build_absolute_uri(
-            reverse('clients:payfast_ipn'))
+        notify_url = request.build_absolute_uri(reverse('clients:payfast_ipn'))
 
-        # Email & plan name for IPN email logic
-        custom_str1 = client.customer_email or client.user.email
-        custom_str2 = plan.plan_name
+        # Correct field name
+        custom_str1 = client.contact_email or client.user.email
+        custom_str2 = plan.name
 
-        # ON-DEMAND
-        if plan_name_lower == 'on-demand':
+        # ON-DEMAND LOGIC
+        if name_lower == 'on-demand':
             waste_size = request.POST.get('waste_size')
             if not waste_size:
                 return render(request, 'client_onboard_pay.html', {
@@ -92,10 +90,11 @@ def payment_info(request):
                     'error': "Please select a waste size."
                 })
 
-            price_map = {'small': 999, 'medium': 1499, 'large': 2999}
+            price_map = {'small': 999, 'medium': 1599, 'large': 2999}
             amount = price_map.get(waste_size)
 
-            client.customer_material_type = waste_size
+            # FIXED field name
+            client.material_type = waste_size
             client.save()
 
             payfast_url = (
@@ -113,10 +112,10 @@ def payment_info(request):
             )
             return redirect(payfast_url)
 
-        # SUBSCRIPTIONS
-        elif plan_name_lower in ['eco', 'eco pro']:
-            amount = plan.plan_price
-            plan_name_url = plan.plan_name.replace(" ", "+")
+        # SUBSCRIPTION LOGIC
+        elif name_lower in ['business eco', 'business eco pro']:
+            amount = plan.price
+            plan_name_url = plan.name.replace(" ", "+")
 
             payfast_url = (
                 f"https://www.payfast.co.za/eng/process?"
