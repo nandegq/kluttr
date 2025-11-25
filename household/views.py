@@ -290,3 +290,16 @@ def clean_waste_type(self):
     waste_type = self.cleaned_data.get('waste_type')
     # Add any custom validation for waste_type here if needed
     return waste_type.lower()
+
+
+def customer_map(request):
+    client = request.user.client
+
+    context = {
+        "pickup_lat": client.pickup_lat,
+        "pickup_lng": client.pickup_lng,
+        "drop_lat": client.drop_lat,
+        "drop_lng": client.drop_lng,
+    }
+
+    return render(request, "customer_map.html", context)

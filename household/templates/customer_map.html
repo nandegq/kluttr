@@ -1,0 +1,46 @@
+{% extends base.html %}
+
+{% block title %}Waste Collection Map{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<div id="map" style="height: 500px;" class="mt-10"></div>
+
+<script>
+    // Pickup & Dropoff coordinates passed from Django
+    const pickupLat = {{ pickup_lat }};
+    const pickupLng = {{ pickup_lng }};
+    const dropLat = {{ drop_lat }};
+    const dropLng = {{ drop_lng }};
+
+    // Initialize map centered on pickup
+    var map = L.map('map').setView([pickupLat, pickupLng], 14);
+
+    // Add free map tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    // Add pickup marker
+    L.marker([pickupLat, pickupLng]).addTo(map)
+        .bindPopup("Pickup Location")
+        .openPopup();
+
+    // Add dropoff marker
+    L.marker([dropLat, dropLng]).addTo(map)
+        .bindPopup("Dropoff Location");
+
+    // Draw line between points
+    var route = L.polyline([
+        [pickupLat, pickupLng],
+        [dropLat, dropLng]
+    ]).addTo(map);
+
+    // Fit map to route
+    map.fitBounds(route.getBounds());
+</script>
+
+{% endblock %}
