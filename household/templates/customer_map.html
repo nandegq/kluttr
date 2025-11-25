@@ -1,46 +1,31 @@
-{% extends base.html %}
+{% extends "base.html" %}
 
-{% block title %}Waste Collection Map{% endblock %}
+{% block title %}Pickup Location{% endblock %}
 
 {% block content %}
+<div class="max-w-4xl mx-auto mt-10">
+    <h2 class="text-3xl font-bold mb-6 text-center">Your Pickup Location</h2>
+
+    <div id="map" style="height: 400px; border-radius: 12px;"></div>
+</div>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<div id="map" style="height: 500px;" class="mt-10"></div>
-
 <script>
-    // Pickup & Dropoff coordinates passed from Django
-    const pickupLat = {{ pickup_lat }};
-    const pickupLng = {{ pickup_lng }};
-    const dropLat = {{ drop_lat }};
-    const dropLng = {{ drop_lng }};
+    const latitude = {{ pickup.latitude }};
+    const longitude = {{ pickup.longitude }};
 
-    // Initialize map centered on pickup
-    var map = L.map('map').setView([pickupLat, pickupLng], 14);
+    const map = L.map('map').setView([latitude, longitude], 15);
 
-    // Add free map tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
+        maxZoom: 19,
     }).addTo(map);
 
-    // Add pickup marker
-    L.marker([pickupLat, pickupLng]).addTo(map)
-        .bindPopup("Pickup Location")
+    L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup("Your Pickup Location")
         .openPopup();
-
-    // Add dropoff marker
-    L.marker([dropLat, dropLng]).addTo(map)
-        .bindPopup("Dropoff Location");
-
-    // Draw line between points
-    var route = L.polyline([
-        [pickupLat, pickupLng],
-        [dropLat, dropLng]
-    ]).addTo(map);
-
-    // Fit map to route
-    map.fitBounds(route.getBounds());
 </script>
 
 {% endblock %}

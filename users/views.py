@@ -35,7 +35,10 @@ def register(request):
                         Client.objects.create(user=user)
                         print("✅ Created Client profile")
                     elif user_type == 'household':
-                        Customer.objects.create(user=user)
+                        Customer.objects.create(user=user, customer_address=form.cleaned_data.get('customer_address'),
+                                                latitude=form.cleaned_data.get(
+                                                    'latitude'),
+                                                longitude=form.cleaned_data.get('longitude'))
                         print("✅ Created Customer profile")
                     elif user_type == 'recycler':
                         Collector.objects.create(user=user)

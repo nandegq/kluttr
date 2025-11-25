@@ -17,6 +17,7 @@ class Profile(models.Model):
 
     user_type = models.CharField(
         max_length=300, choices=USER_TYPES)
+    address = models.TextField(null=True, blank=True)
 
     def __str__(
         self): return f"{self.user} - {self.user_type} Profile" or 'No profile'

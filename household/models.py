@@ -54,6 +54,8 @@ class CustomerPickups(models.Model):
         null=True, blank=True, choices=WASTE_SIZES, max_length=300)
     customer_collected_by = models.CharField(
         max_length=250,  null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.customer_pickup_plan} - {self.customer_scheduled_date}"
@@ -73,6 +75,8 @@ class Customer(models.Model):
     customer_material_type = models.CharField(
         max_length=300,  null=True, blank=True)
     customer_date_requested = models.DateTimeField(default=timezone.now)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} - Household Profile'
