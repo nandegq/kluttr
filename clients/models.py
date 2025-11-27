@@ -62,9 +62,9 @@ class Pickups(models.Model):
     PICKUP_STATUSES = [('completed', 'Completed'),
                        ('pending', 'Pending'),
                        ('cancelled', ' Cancelled')]
-    WASTE_SIZES = [('small', 'Small/Light/Equivalent to wheelie (R999)'),
-                   ('medium', 'Medium/Standard/Equivalent to half bakkie load (R1599)'),
-                   ('large', 'Large/Bulky items/Full bakkie size and beyond (R2999)'),]
+    WASTE_SIZES = [('small', 'Small/Light/Equivalent to wheelie (R1499)'),
+                   ('medium', 'Medium/Standard/Equivalent to half bakkie load (R1999)'),
+                   ('large', 'Large/Bulky items/Full bakkie size and beyond (R3499)'),]
     pickup_plan = models.ForeignKey(PickupPlan, on_delete=models.CASCADE)
     scheduled_date = models.DateField()
     pickup_time = models.TimeField(null=True, blank=True)
