@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Business Dashboard | kluttr.
+Business Dashboard | Kluttr
 {% endblock %}
 
 {% block content %}
@@ -11,11 +11,20 @@ Business Dashboard | kluttr.
         Manage your waste pickups, subscriptions, and track progress all from one place.
     </p>
 
+    <!-- Show current plan or On-Demand pickup -->
     {% if user.client.selected_plan %}
     <p class="text-gray-700 text-lg font-medium mt-2">
         Current Plan: <strong>{{ user.client.selected_plan.name }}</strong> -
-        {{ user.client.selected_plan.pickups_per_month }} pickup{% if user.client.selected_plan.pickups_per_month > 1%}s
-        {% endif %} per month
+        {{ user.client.selected_plan.pickups_per_month }} pickup{% if user.client.selected_plan.pickups_per_month > 1
+        %}s{% endif %} per month
+    </p>
+    {% elif user.client.material_type %}
+    <p class="text-gray-700 text-lg font-medium mt-2">
+        Current On-Demand Pickup: <strong>{{ user.client.material_type|capfirst }}</strong>
+    </p>
+    {% else %}
+    <p class="text-gray-700 text-lg font-medium mt-2">
+        You currently have no active plan or On-Demand pickup.
     </p>
     {% endif %}
 
@@ -25,7 +34,7 @@ Business Dashboard | kluttr.
         <!-- Plan Selection -->
         <div class="glass p-6 rounded-2xl shadow-md hover:shadow-lg transition">
             <h3 class="text-xl font-semibold mb-2 text-gray-800">Manage your plan</h3>
-            <p class="text-gray-600 mb-4">View or Change your plan.</p>
+            <p class="text-gray-600 mb-4">View or change your plan.</p>
             <a href="{% url 'clients:manage_plan' %}"
                 class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                 View Plans
@@ -35,8 +44,16 @@ Business Dashboard | kluttr.
         <!-- Schedule Pickups -->
         <div class="glass p-6 rounded-2xl shadow-md hover:shadow-lg transition">
             <h3 class="text-xl font-semibold mb-2 text-gray-800">Schedule Pickups</h3>
-            <p class="text-gray-600 mb-4">Once subscribed, you can schedule your pickups for the month.</p>
-            {% if user.client.selected_plan %}
+            <p class="text-gray-600 mb-4">
+                {% if user.client.selected_plan %}
+                Once subscribed, you can schedule your pickups for the month.
+                {% elif user.client.material_type %}
+                You can schedule your On-Demand pickup below.
+                {% else %}
+                You need a plan or On-Demand pickup to schedule.
+                {% endif %}
+            </p>
+            {% if user.client.selected_plan or user.client.material_type %}
             <a href="{% url 'clients:schedule' %}"
                 class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                 Schedule Now
@@ -50,19 +67,18 @@ Business Dashboard | kluttr.
 
         <!-- View Reports -->
         <div class="glass p-6 rounded-2xl shadow-md hover:shadow-lg transition">
-            <h3 class="text-xl font-semibold mb-2 text-gray-800">View analytics</h3>
-            <p class="text-gray-600 mb-4">Track your impact.</p>
-            {% if user.client.selected_plan %}
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">View Analytics</h3>
+            <p class="text-gray-600 mb-4">Track your impact and progress.</p>
+            {% if user.client.selected_plan or user.client.material_type %}
             <a href="{% url 'analytics:client_dashboard' %}"
                 class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                View now
+                View Now
             </a>
             {% else %}
             <button class="bg-blue-300 text-white px-4 py-2 rounded-lg cursor-not-allowed" disabled>
-                View analytics
+                View Analytics
             </button>
             {% endif %}
-
         </div>
 
     </div>

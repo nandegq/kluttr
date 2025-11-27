@@ -9,7 +9,7 @@ class Plans(models.Model):
 
     pickups_per_month = models.PositiveIntegerField()
     pickups_done = models.PositiveIntegerField(default=0)
-    all_locations = models.BooleanField(default=True)
+    all_locations = models.BooleanField(default=False)
     is_popular = models.BooleanField(default=False)
     name = models.CharField(max_length=300, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=2000)
