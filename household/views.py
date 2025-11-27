@@ -127,7 +127,7 @@ def household_payment_info(request):
                     'error': "Please select a waste size."
                 })
 
-            price_map = {'small': 499, 'medium': 799, 'large': 1999}
+            price_map = {'small': 10, 'medium': 799, 'large': 1999}
             amount = price_map.get(waste_size)
 
             client.customer_material_type = waste_size
