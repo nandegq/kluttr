@@ -5,7 +5,6 @@
 {% block content %}
 <div class="max-w-4xl mx-auto mt-10">
     <h2 class="text-3xl font-bold mb-6 text-center">Your Pickup Location</h2>
-
     <div id="map" style="height: 400px; border-radius: 12px;"></div>
 </div>
 
@@ -13,8 +12,8 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    const latitude = {{ pickup.latitude }};
-    const longitude = {{ pickup.longitude }};
+    const latitude = parseFloat("{{ pickup_lat }}");
+    const longitude = parseFloat("{{ pickup_lng }}");
 
     const map = L.map('map').setView([latitude, longitude], 15);
 
@@ -22,10 +21,11 @@
         maxZoom: 19,
     }).addTo(map);
 
-    L.marker([latitude, longitude])
-        .addTo(map)
-        .bindPopup("Your Pickup Location")
-        .openPopup();
+    if (latitude && longitude) {
+        L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup("Your Pickup Location")
+            .openPopup();
+    }
 </script>
-
 {% endblock %}

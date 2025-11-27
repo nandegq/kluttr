@@ -292,14 +292,23 @@ def clean_waste_type(self):
     return waste_type.lower()
 
 
+@login_required
 def customer_map(request):
-    client = request.user.client
+    customer = request.user.customer
+
+    # Get the latest scheduled pickup (or pending pickup)
+    pickup = CustomerPickups.objects.filter(
+        customer_pickup_plan__customerplan=customer.customer_plan,
+        customer_pickup_completed='pending'
+    ).order_by('-customer_scheduled_date').first()
+
+    # Fallback coordinates if no pickup exists
+    pickup_lat = pickup.latitude if pickup else 0
+    pickup_lng = pickup.longitude if pickup else 0
 
     context = {
-        "pickup_lat": client.pickup_lat,
-        "pickup_lng": client.pickup_lng,
-        "drop_lat": client.drop_lat,
-        "drop_lng": client.drop_lng,
+        'pickup_lat': pickup_lat,
+        'pickup_lng': pickup_lng
     }
 
-    return render(request, "customer_map.html", context)
+    return render(request, 'customer_map.html', context)
