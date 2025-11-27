@@ -33,7 +33,7 @@ class CustomerPickups(models.Model):
     PICKUP_STATUS = [('completed', 'Completed'),
                      ('pending', 'Pending'),
                      ('cancelled', 'Cancelled')]
-    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag (R499)'),
+    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag (R10)'),
                    ('medium', 'Medium/Standard/Equivalent to bin bag (R899)'),
                    ('large', 'Large/Bulky items (R1999)'),]
     customer_pickup_plan = models.ForeignKey(
