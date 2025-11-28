@@ -23,7 +23,7 @@ from users import views as users_views
 
 
 urlpatterns = [
-    path('', client_views.landing, name='landing'),
+    path('', client_views.index, name='index'),
     path("admin/", admin.site.urls),
     path('accounts/login/', users_views.login_view, name='login'),
     path('accounts/', include("django.contrib.auth.urls")),

@@ -25,6 +25,10 @@ def landing(request):
     return render(request, 'landing.html')
 
 
+def index(request):
+    return render(request, 'index.html')
+
+
 def business_onboarding(request):
     profile = request.user.profile
 
@@ -90,7 +94,7 @@ def payment_info(request):
                     'error': "Please select a waste size."
                 })
 
-            price_map = {'small': 999, 'medium': 1599, 'large': 2999}
+            price_map = {'small': 1499, 'medium': 1999, 'large': 3499}
             amount = price_map.get(waste_size)
 
             # FIXED field name
