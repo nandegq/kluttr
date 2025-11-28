@@ -10,7 +10,8 @@ class CustomerSchedulingForm(forms.ModelForm):
             'customer_pickup_time',
             'customer_waste_type',
             'customer_notes',
-            'customer_images'
+            'customer_images',
+            'customer_address',
         ]
         widgets = {
             'customer_scheduled_date': forms.DateInput(
@@ -20,6 +21,9 @@ class CustomerSchedulingForm(forms.ModelForm):
                 attrs={'type': 'time', 'class': 'w-full p-2 border rounded-lg'}
             ),
             'customer_notes': forms.Textarea(
+                attrs={'rows': 3, 'class': 'w-full p-2 border rounded-lg'}
+            ),
+            'customer_address': forms.Textarea(
                 attrs={'rows': 3, 'class': 'w-full p-2 border rounded-lg'}
             ),
             'customer_images': forms.ClearableFileInput(
