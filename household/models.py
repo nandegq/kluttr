@@ -54,6 +54,7 @@ class CustomerPickups(models.Model):
         null=True, blank=True, choices=WASTE_SIZES, max_length=300)
     customer_collected_by = models.CharField(
         max_length=250,  null=True, blank=True)
+    customer_address = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.customer_pickup_plan} - {self.customer_scheduled_date}"
@@ -65,7 +66,6 @@ class Customer(models.Model):
     customer_name = models.CharField(
         max_length=400,  null=True, blank=True)
     customer_email = models.EmailField(max_length=250,  null=True, blank=True)
-    customer_address = models.TextField()
     customer_plan = models.ForeignKey(
         CustomerPlans, on_delete=models.SET_NULL, null=True, blank=True)
     customer_phone_number = models.CharField(
