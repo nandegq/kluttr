@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomerPickups, CustomerPickupPlan
+from .models import CustomerPickups
 
 
 class CustomerSchedulingForm(forms.ModelForm):
