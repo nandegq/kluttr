@@ -127,7 +127,7 @@ def household_payment_info(request):
                     'error': "Please select a waste size."
                 })
 
-            price_map = {'small': 10, 'medium': 799, 'large': 1999}
+            price_map = {'small': 499, 'medium': 799, 'large': 1999}
             amount = price_map.get(waste_size)
 
             client.customer_material_type = waste_size
@@ -290,25 +290,3 @@ def clean_waste_type(self):
     waste_type = self.cleaned_data.get('waste_type')
     # Add any custom validation for waste_type here if needed
     return waste_type.lower()
-
-
-@login_required
-def customer_map(request):
-    customer = request.user.customer
-
-    # Get the latest scheduled pickup (or pending pickup)
-    pickup = CustomerPickups.objects.filter(
-        customer_pickup_plan__customerplan=customer.customer_plan,
-        customer_pickup_completed='pending'
-    ).order_by('-customer_scheduled_date').first()
-
-    # Fallback coordinates if no pickup exists
-    pickup_lat = pickup.latitude if pickup else 0
-    pickup_lng = pickup.longitude if pickup else 0
-
-    context = {
-        'pickup_lat': pickup_lat,
-        'pickup_lng': pickup_lng
-    }
-
-    return render(request, 'customer_map.html', context)

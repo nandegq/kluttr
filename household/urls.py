@@ -11,5 +11,4 @@ urlpatterns = [
     path('dashboard/', views.household_dashboard, name='household_dashboard'),
     path('pay-ipn/', views.household_payfast_ipn, name='household_payfast_ipn'),
     path('manage_plan/', views.household_manage_plan,
-         name='household_manage_plan'),
-    path('map/', views.customer_map, name='customer_map'),]
+         name='household_manage_plan'),]

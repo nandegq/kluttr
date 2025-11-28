@@ -32,7 +32,5 @@ class RegistrationForm(UserCreationForm):
             Field('password2', css_class='form-control mb-3'),
             Field('user_type', css_class='form-control mb-3'),
             Field('customer_address', css_class='form-control mb-3'),
-            Field('latitude', css_class='form-control mb-3'),
-            Field('longitude', css_class='form-control mb-3'),
             Submit('submit', 'Register', css_class='btn btn-primary w-100')
         )
