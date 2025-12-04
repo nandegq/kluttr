@@ -253,7 +253,7 @@ def household_schedule(request):
                 pickup_plan.save()
 
                 messages.success(request, "Pickup scheduled successfully!")
-                return redirect('household:customer_map')
+                return redirect('household:household_success')
             else:
                 print(form.errors)  # debug validation errors
         else:
