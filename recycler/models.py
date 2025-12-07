@@ -15,7 +15,7 @@ class Collector(models.Model):
     @property
     def earnings(self):
         completed_pickups = self.pickup_set.filter(status='completed')
-        total = sum(p.price * 0.20 for p in completed_pickups)
+        total = sum(p.price * 0.60 for p in completed_pickups)
         return round(total, 2)
 
     def save(self, *args, **kwargs):

@@ -33,9 +33,9 @@ class CustomerPickups(models.Model):
     PICKUP_STATUS = [('completed', 'Completed'),
                      ('pending', 'Pending'),
                      ('cancelled', 'Cancelled')]
-    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag (R10)'),
-                   ('medium', 'Medium/Standard/Equivalent to bin bag (R899)'),
-                   ('large', 'Large/Bulky items (R1999)'),]
+    WASTE_SIZES = [('small', 'Small/Light/Equivalent to plastic bag (R799)'),
+                   ('medium', 'Medium/Standard/Equivalent to bin bag (R1499)'),
+                   ('large', 'Large/Bulky items (R2499)'),]
     customer_pickup_plan = models.ForeignKey(
         CustomerPlans, on_delete=models.CASCADE)
     customer_scheduled_date = models.DateField()
