@@ -29,34 +29,34 @@ def register(request):
 
                 with transaction.atomic():
                     print(
-                        f"🟢 Creating user: {user.username}, type: {user_type}, profile ID:{profile}")
+                        f"Creating user: {user.username}, type: {user_type}, profile ID:{profile}")
 
                     if user_type == 'business':
                         Client.objects.create(user=user)
-                        print("✅ Created Client profile")
+                        print("Created Client profile")
                     elif user_type == 'household':
                         Customer.objects.create(user=user)
-                        print("✅ Created Customer profile")
+                        print("Created Customer profile")
                     elif user_type == 'recycler':
                         Collector.objects.create(user=user)
-                        print("✅ Created Collector profile")
+                        print("Created Collector profile")
                     else:
                         print(
-                            f"⚠️ No profile created — user_type = {user_type}")
+                            f"No profile created — user_type = {user_type}")
 
             except Exception as e:
-                print(f"❌ Failed to create profile for {user.username}: {e}")
+                print(f"Failed to create profile for {user.username}: {e}")
                 import traceback
                 traceback.print_exc()  # show full traceback
                 user.delete()
-                print("🛑 Registration rolled back")
+                print("Registration rolled back")
 
             messages.success(
                 request, "Registration successful! You can now log in.")
             return redirect("login")
 
         else:
-            print("❌ Registration form errors:", form.errors)
+            print("Registration form errors:", form.errors)
             messages.error(request, "Invalid data submitted.")
     else:
         form = RegistrationForm()
