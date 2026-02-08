@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import dj_database_url
 load_dotenv()
 
 
@@ -28,12 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-for-local")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ['kluttr.onrender.com',
-                 '127.0.0.1', 'www.kluttr.co.za', 'kluttr.co.za']
+DEBUG = "True"
+ALLOWED_HOSTS = ['127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://kluttr.onrender.com',
-                        'https://www.kluttr.co.za', 'https://kluttr.co.za',]
+CSRF_TRUSTED_ORIGINS = ["http://localhost",
+    "http://127.0.0.1",
+    "https://sandbox.payfast.co.za",]
 
 
 # Application definition
@@ -90,9 +89,9 @@ WSGI_APPLICATION = "kluttr.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
+DATABASES = { "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",}}
 
 
 # Password validation
@@ -138,7 +137,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CRISPY_TEMPLATE_ALLOWED_PACKS = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 
@@ -147,7 +146,7 @@ LOGOUT_REDIRECT_URL = 'users:login'
 
 PAYFAST_MERCHANT_ID = os.getenv("PAYFAST_MERCHANT_ID")
 PAYFAST_MERCHANT_KEY = os.getenv("PAYFAST_MERCHANT_KEY")
-PAYFAST_TEST = False
+PAYFAST_TEST = True
 PAYFAST_PASSPHRASE = os.getenv("PAYFAST_PASSPHRASE")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
