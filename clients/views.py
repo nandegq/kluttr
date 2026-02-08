@@ -98,7 +98,7 @@ def payment_info(request):
             client.save()
 
             payfast_url = (
-                f"https://www.payfast.co.za/eng/process?"
+                f"https://sandbox.payfast.co.za/eng/process?"
                 f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"amount={amount}&"
@@ -118,7 +118,7 @@ def payment_info(request):
             plan_name_url = plan.name.replace(" ", "+")
 
             payfast_url = (
-                f"https://www.payfast.co.za/eng/process?"
+                f"https://sandbox.payfast.co.za/eng/process?"
                 f"merchant_id={settings.PAYFAST_MERCHANT_ID}&"
                 f"merchant_key={settings.PAYFAST_MERCHANT_KEY}&"
                 f"subscription_type=1&"
@@ -151,8 +151,8 @@ def payfast_ipn(request):
         # Convert to proper encoded string
         encoded_data = urllib.parse.urlencode(data)
 
-        # Verify with PayFast (LIVE)
-        verify_url = "https://www.payfast.co.za/eng/query/validate"
+        # Verify with PayFast
+        verify_url = "https://sandbox.payfast.co.za/eng/query/validate"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         verify_response = requests.post(
@@ -187,7 +187,7 @@ def send_confirmation_email_html(user_email, plan_name):
 def schedule_pickup(request):
     client = request.user.client
 
-    # 🧩 Ensure client has selected a plan first
+    #Ensure client has selected a plan first
     if not client.selected_plan:
         messages.error(
             request, "Please select a plan before scheduling a pickup.")
@@ -196,7 +196,7 @@ def schedule_pickup(request):
     today = date.today()
     current_month = date(today.year, today.month, 1)
 
-    # ✅ Get or create the PickupPlan properly
+    #Get or create the PickupPlan properly
     pickup_plan, created = PickupPlan.objects.get_or_create(
         client=client,
         month=current_month,
@@ -206,14 +206,14 @@ def schedule_pickup(request):
         }
     )
 
-    # 🧾 Handle form submission
+    #Handle form submission
     if request.method == 'POST':
         print('POST data:', request.POST)  # Debugging line
         form = PickUpScheduling(
             request.POST, request.FILES, pickup_plan=pickup_plan)
         if form.is_valid():
             pickup = form.save()
-            # ✅ Update pickup count
+            #Update pickup count
             pickup_plan.pickups_done += 1
             pickup_plan.save()
 
