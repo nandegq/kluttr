@@ -13,9 +13,11 @@ staticfiles/
 # Virtual environment
 venv/
 env/
+kluttrenv/
 
 # VS Code
 .vscode/
 
 # Mac
 .DS_Store
+
